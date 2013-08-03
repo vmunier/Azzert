@@ -22,12 +22,21 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
       values: data
 
   nv.addGraph ->
-    chart = nv.models.lineChart()
-    chart.xAxis.tickFormat d3.format(",f")
-    chart.yAxis.tickFormat d3.format(",.2f")
+    chart = nv.models.lineChart().x((d) ->
+      d[0]
+    ).y((d) ->
+      d[1] / 100
+    )
+    chart.xAxis.tickFormat (d) ->
+      # if the visitor is french, this should be %d-%m-%Y
+      # d3.time.format("%d-%m-%Y") new Date(d)
+      d3.time.format("%Y-%m-%d") new Date(d)
+
+    chart.yAxis.tickFormat d3.format(",.1%")
+
 
     draw = ->
-      d3.select("#chart svg").datum(testData()).transition().duration(500).call chart
+      d3.select("#chart svg").datum(testDataWithDate()).transition().duration(500).call chart
 
     draw()
     nv.utils.windowResize chart.update
