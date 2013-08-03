@@ -22,11 +22,10 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
       values: data
 
   nv.addGraph ->
-    chart = nv.models.lineWithFocusChart()
+    chart = nv.models.lineChart()
     chart.xAxis.tickFormat d3.format(",f")
-    chart.x2Axis.tickFormat d3.format(",f")
     chart.yAxis.tickFormat d3.format(",.2f")
-    chart.y2Axis.tickFormat d3.format(",.2f")
+
     draw = ->
       d3.select("#chart svg").datum(testData()).transition().duration(500).call chart
 
