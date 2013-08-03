@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, questionChartService) ->
 
   dateLine = (num) ->
     key: "Line" + num
@@ -9,6 +9,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
       console.log "currentDate: ", currentDate.getTime()
       [currentDate.getTime(), yVal]
     )
+
   testDataWithDate = ->
     range(0, 2).map (num) ->
       dateLine num
@@ -21,27 +22,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
       key: "Stream" + i
       values: data
 
-  nv.addGraph ->
-    chart = nv.models.lineChart().x((d) ->
-      d[0]
-    ).y((d) ->
-      d[1] / 100
-    )
-    chart.xAxis.tickFormat (d) ->
-      # if the visitor is french, this should be %d-%m-%Y
-      # d3.time.format("%d-%m-%Y") new Date(d)
-      d3.time.format("%Y-%m-%d") new Date(d)
-
-    chart.yAxis.tickFormat d3.format(",.1%")
-
-
-    draw = ->
-      d3.select("#chart svg").datum(testDataWithDate()).transition().duration(500).call chart
-
-    draw()
-    nv.utils.windowResize chart.update
-    chart
-
   range = (start, end) ->
     foo = []
     i = start
@@ -50,3 +30,5 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope) ->
       foo.push i
       i++
     foo
+
+  questionChartService.draw(testDataWithDate())
