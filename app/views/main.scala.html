@@ -1,0 +1,66 @@
+@(title: String, angularCtrl:String = "")(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>@title</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/angular-ui/build/angular-ui.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("customized-nvd3/nv.d3.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+  </head>
+
+  <body ng-app="azzertApp">
+    <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="@routes.Assets.at("components/es5-shim/es5-shim.js")"></script>
+        <script src="@routes.Assets.at("components/json3/lib/json3.min.js")"></script>
+        <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="container body" @if(angularCtrl != "") { ng-controller="@angularCtrl" }>
+      <div class="hero-unit">
+        <h1>Azzert</h1>
+      </div>
+
+      @content
+      </div>
+    </div>
+
+    <!-- javascripts libs -->
+    <script src="@routes.Assets.at("components/jquery/jquery.js")"></script>
+    <!-- use jquery.cookie because cookieStore from AngularJS does not support expiration date -->
+    <script src="@routes.Assets.at("components/jquery.cookie/jquery.cookie.js")"></script>
+    <script src="@routes.Assets.at("components/unstable-angular-complete/angular.js")"></script>
+    <script src="@routes.Assets.at("components/unstable-angular-complete/angular-resource.js")"></script>
+    <script src="@routes.Assets.at("components/unstable-angular-complete/angular-cookies.js")"></script>
+    <script src="@routes.Assets.at("components/unstable-angular-complete/angular-sanitize.js")"></script>
+    <script src="@routes.Assets.at("components/unstable-angular-complete/angular-bootstrap.js")"></script>
+    <script src="@routes.Assets.at("components/angular-bootstrap/ui-bootstrap.js")"></script>
+    <script src="@routes.Assets.at("components/angular-bootstrap/ui-bootstrap-tpls.js")"></script>
+    <script src="@routes.Assets.at("components/angular-ui/common/module.js")"></script>
+    <script src="@routes.Assets.at("components/angular-ui/build/angular-ui.js")"></script>
+
+    <script src="@routes.Assets.at("components/nvd3/lib/d3.v2.js")"></script>
+    <script src="@routes.Assets.at("components/nvd3/nv.d3.js")"></script>
+
+    <script src="@routes.Assets.at("customized-nvd3/tooltip.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/utils.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/models/legend.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/models/axis.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/models/scatter.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/models/line.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/models/lineWithFocusChart.js")"></script>
+    <script src="@routes.Assets.at("customized-nvd3/stream_layers.js")"></script>
+
+    <!-- my own javascript files -->
+    <script src="@routes.Assets.at("javascripts/routes.js")"></script>
+    <script src="@routes.Assets.at("javascripts/questions/questionsCtrl.js")"></script>
+    <script src="@routes.Assets.at("javascripts/questions/questionCtrl.js")"></script>
+  </body>
+</html>
