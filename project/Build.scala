@@ -20,6 +20,6 @@ object ApplicationBuild extends Build {
     libraryDependencies <+= scalaVersion { v =>
       compilerPlugin("org.scala-lang.plugins" % "continuations" % v) },
     scalacOptions ++= Seq("-P:continuations:enable", "-unchecked", "-deprecation", "-feature")
-  )
+  ).dependsOn(RootProject(uri("git://github.com/baloo/play-plugins-redis.git")))
 
 }
