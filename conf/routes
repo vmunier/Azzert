@@ -3,11 +3,21 @@
 # ~~~~
 
 # Home page
-GET   /                  controllers.Application.index
+GET    /                            controllers.Application.index(any = "none")
 
-GET   /questions         controllers.Application.questions
+GET    /views/question              controllers.QuestionCtrl.questionPage
+GET    /views/questions             controllers.QuestionsCtrl.questionsPage
 
-GET   /questions/:name   controllers.Application.question(name)
+GET    /api/questions               controllers.QuestionsCtrl.questions
+POST   /api/questions               controllers.QuestionCtrl.save
+GET    /api/questions/:id           controllers.QuestionCtrl.question(id)
+
+GET    /api/questions/:id/answers   controllers.AnswerCtrl.answers(id)
+
+POST   /api/answers/:id/:vote       controllers.AnswerCtrl.vote(id, vote:Int)
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET   /assets/*file      controllers.Assets.at(path="/public", file)
+GET    /assets/*file                controllers.Assets.at(path="/public", file)
+
+GET    /*any                        controllers.Application.index(any)

@@ -1,9 +1,38 @@
-@(name:String)
+@()
 
-@main("Question " + name, "QuestionCtrl") {
-  <h2>@name</h2>
+<h2>{{question.name}}</h2>
 
-  <div id="chart">
-    <svg style="height: 400px;"></svg>
+<div class="row">
+
+  <div class="span3" ng-repeat="answer in answers">
+    <div class="row">
+      <div class="span1">
+        {{answer.name}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="span1">
+	<div class="row">
+	  <button ng-click="inc(answer._id, 1)" class="span1 btn">
+            <strong style="color: red;">+1</strong>
+	  </button>
+	</div>
+	<div class="row">
+	  <button ng-click="inc(answer._id, -1)" class="span1 btn">
+            <strong style="color: orange;">-1</strong>
+	  </button>
+	</div>
+      </div>
+      <div class="span2">
+	{{votes[answer._id]}}
+      </div>
+    </div>
   </div>
-}
+
+</div>
+
+
+<div id="chart">
+  <svg style="height: 400px;"></svg>
+</div>
+

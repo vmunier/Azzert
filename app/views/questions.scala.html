@@ -1,7 +1,6 @@
 @()
 
-@main("Questions", "QuestionsCtrl") {
-  coucou
-
-  <a href="/questions/ma-question">ma question</a>
-}
+Available questions :
+<div ng-repeat="q in questions">
+  <a href="/questions/{{q._id}}">{{q.name}}</a>
+</div>

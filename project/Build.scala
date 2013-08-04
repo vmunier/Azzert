@@ -9,13 +9,17 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     // Add your project dependencies here,
-    jdbc,
-    anorm
+    "com.typesafe.akka" %% "akka-dataflow" % "2.1.2",
+    "org.reactivemongo" %% "reactivemongo" % "0.9",
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.9"
   )
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+    autoCompilerPlugins := true,
+    libraryDependencies <+= scalaVersion { v =>
+      compilerPlugin("org.scala-lang.plugins" % "continuations" % v) },
+    scalacOptions ++= Seq("-P:continuations:enable", "-unchecked", "-deprecation", "-feature")
   )
 
 }

@@ -1,4 +1,23 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, questionChartService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, titleService, questionResource, answerResource, questionChartService) ->
+
+
+
+  $scope.answers = []
+  $scope.votes = []
+  $scope.questionId = $routeParams.id
+
+  $scope.question = questionResource.get {'id': $scope.questionId}, () ->
+    titleService.set("Question #{$scope.question.name}")
+
+  answerIdToArrIndex = {'123az': 0}
+
+  $scope.answers = answerResource.query {'id': $scope.questionId}, () ->
+    for answer in $scope.answers
+      console.log("answer : ", answer)
+      $scope.votes[answer._id] = 0
+
+  $scope.inc = (answerId, val) ->
+    $scope.votes[answerId] += val
 
   dateLine = (num) ->
     key: "Line" + num
@@ -6,7 +25,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, questionChartSer
       currentDate = new Date()
       currentDate.setDate currentDate.getDate() + d
       yVal = Math.floor(Math.random() * 50) + 1
-      console.log "currentDate: ", currentDate.getTime()
       [currentDate.getTime(), yVal]
     )
 
@@ -16,8 +34,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, questionChartSer
 
   testData = ->
     lines = stream_layers(2, 20, .1)
-    console.log lines.length
-    console.log lines
     lines.map (data, i) ->
       key: "Stream" + i
       values: data
@@ -31,4 +47,23 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, questionChartSer
       i++
     foo
 
-  questionChartService.draw(testDataWithDate())
+  chartData = testDataWithDate()
+
+  questionChartService.setData(chartData)
+  questionChartService.draw()
+
+  chart = questionChartService.chart
+
+  pushLineData = (answerId, value) ->
+    idx = answerIdToArrIndex[answerId]
+    questionChartService.pushLineData(idx, value)
+
+  f = () ->
+    setTimeout () ->
+      for val in testDataWithDate()[0].values.slice(0, 4)
+        pushLineData('123az', val)
+      questionChartService.draw()
+      f()
+    ,
+      5000
+  # f()

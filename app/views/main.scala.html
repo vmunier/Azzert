@@ -1,10 +1,10 @@
-@(title: String, angularCtrl:String = "")(content: Html)
+@()
 
 <!DOCTYPE html>
 
-<html>
+<html ng-app="azzertApp" ng-controller="MainCtrl">
   <head>
-    <title>@title</title>
+    <title>{{pageTitle}}</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/angular-ui/build/angular-ui.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("customized-nvd3/nv.d3.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
@@ -12,7 +12,7 @@
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
   </head>
 
-  <body ng-app="azzertApp">
+  <body>
     <!--[if lt IE 7]>
         <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
@@ -23,13 +23,12 @@
         <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container body" @if(angularCtrl != "") { ng-controller="@angularCtrl" }>
+    <div class="container body">
       <div>
         <h1>Azzert</h1>
       </div>
-
-      @content
-      </div>
+      <!-- content will go to the ng-view div -->
+      <div ng-view></div>
     </div>
 
     <!-- javascripts libs -->
@@ -51,9 +50,14 @@
     <script src="@routes.Assets.at("customized-nvd3/stream_layers.js")"></script>
 
     <!-- my own javascript files -->
+    <!-- routes.js needs to be loaded first and defines global dependencies such as 'ngCookies' and 'ngResource' -->
     <script src="@routes.Assets.at("javascripts/routes.js")"></script>
+    <script src="@routes.Assets.at("javascripts/mainCtrl.js")"></script>
+    <script src="@routes.Assets.at("javascripts/utils/titleService.js")"></script>
     <script src="@routes.Assets.at("javascripts/questions/questionsCtrl.js")"></script>
     <script src="@routes.Assets.at("javascripts/questions/questionCtrl.js")"></script>
+    <script src="@routes.Assets.at("javascripts/questions/questionResource.js")"></script>
     <script src="@routes.Assets.at("javascripts/charts/questionChartService.js")"></script>
+    <script src="@routes.Assets.at("javascripts/answers/answerResource.js")"></script>
   </body>
 </html>
