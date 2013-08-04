@@ -10,6 +10,7 @@ import utils.JsonFormats._
 import play.api.libs.json.JsArray
 import models.Vote
 import reactivemongo.bson.BSONObjectID
+import org.joda.time.DateTime
 
 object VoteCtrl extends Controller {
   def votes(questionId: String, answerId: String) = Action {
@@ -26,7 +27,7 @@ object VoteCtrl extends Controller {
     if (!(vote == -1 || vote == 1)) {
       BadRequest("authorized vote values : -1 or 1")
     } else {
-      Vote(vote, BSONObjectID(answerId)).save()
+      Vote(vote, new DateTime(), BSONObjectID(answerId)).save()
       Ok("")
     }
   }

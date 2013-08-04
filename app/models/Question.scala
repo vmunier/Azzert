@@ -15,6 +15,8 @@ import reactivemongo.api.Cursor
 import scala.concurrent.Future
 import utils.Mongo._
 import play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
+import reactivemongo.core.commands.Count
+import play.api.libs.json.JsArray
 
 case class Question(name: String, _id: BSONObjectID = BSONObjectID.generate) {
   import Question._
@@ -36,6 +38,10 @@ object Question {
 
   def find(_id: String): Future[Option[Question]] = {
     collection.find(Json.obj("_id" -> BSONObjectID(_id))).one[Question]
+  }
+
+  def count: Future[Int] = {
+    db.command(Count(collection.name))
   }
 
   def findAll() = {

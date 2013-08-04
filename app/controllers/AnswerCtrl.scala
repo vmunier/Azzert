@@ -10,6 +10,7 @@ import utils.JsonFormats._
 import play.api.libs.json.JsArray
 import models.Vote
 import reactivemongo.bson.BSONObjectID
+import jobs.HistoryActor
 
 object AnswerCtrl extends Controller {
   def answers(questionId: String) = Action {
@@ -22,7 +23,7 @@ object AnswerCtrl extends Controller {
     }
   }
 
-  def answer(questionId:String, answerId: String) = Action {
+  def answer(questionId: String, answerId: String) = Action {
     Async {
       flow {
         val maybeAnswer = Answer.find(answerId)()
@@ -40,7 +41,9 @@ object AnswerCtrl extends Controller {
         if (!(inc == -1 || inc == 1)) {
           BadRequest("authorized vote values : -1 or 1")
         } else {
-          Answer.incVoteCount(answerId, inc)
+          Answer.incVoteCount(answerId, inc).map { _ =>
+            HistoryActor.subscribe(answerId)
+          }
           Ok("")
         }
       }

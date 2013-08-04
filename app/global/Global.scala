@@ -14,6 +14,7 @@ object Global extends GlobalSettings {
     val plugin = app.plugin(classOf[RedisPlugin]).get
     plugin.onStart()
     redisPlugin.set(plugin)
+    jobs.HistoryActor.startup()
   }
 
   override def onStop(app: Application) {

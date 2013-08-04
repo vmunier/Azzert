@@ -16,9 +16,10 @@ GET    /api/questions/:id/answers                                    controllers
 GET    /api/questions/:questionId/answers/:answerId                  controllers.AnswerCtrl.answer(questionId, answerId)
 POST   /api/questions/:questionId/answers/:answerId/voteCount/:inc   controllers.AnswerCtrl.incVoteCount(questionId, answerId, inc:Int)
 
-GET    /api/questions/:questionId/answers/:answerId/votes            controllers.VoteCtrl.votes(questionId, answerId)
+#GET    /api/questions/:questionId/answers/:answerId/votes            controllers.VoteCtrl.votes(questionId, answerId)
 POST   /api/questions/:questionId/answers/:answerId/votes/:vote      controllers.VoteCtrl.save(questionId, answerId, vote:Int)
 
+GET    /api/answer-history/:answerId/sse                             controllers.AnswerHistoryCtrl.sseSession(answerId)
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file                                                 controllers.Assets.at(path="/public", file)

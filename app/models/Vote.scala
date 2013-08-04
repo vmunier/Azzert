@@ -9,8 +9,10 @@ import utils.Mongo._
 import utils.JsonFormats.voteFormat
 import play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
 import scala.concurrent.ExecutionContext.Implicits.global
+import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.IndexType
 
-case class Vote(value: Int, answerId: BSONObjectID, date: DateTime = new DateTime(), _id: BSONObjectID = BSONObjectID.generate) {
+case class Vote(value: Int, date: DateTime = new DateTime(), answerId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
   def save() = {
     Vote.collection.insert(this)
   }
@@ -20,13 +22,15 @@ case class Vote(value: Int, answerId: BSONObjectID, date: DateTime = new DateTim
       "_id" -> _id.stringify,
       "value" -> value,
       "answerId" -> answerId.stringify,
-      "date" -> date
-    )
+      "date" -> date)
   }
 }
 
 object Vote {
   def collection: JSONCollection = db.collection[JSONCollection]("votes")
+
+  collection.indexesManager.ensure(
+    Index(List("answerId" -> IndexType.Ascending), unique = false))
 
   def find(_id: String): Future[Option[Vote]] = {
     collection.find(Json.obj("_id" -> BSONObjectID(_id))).one[Vote]

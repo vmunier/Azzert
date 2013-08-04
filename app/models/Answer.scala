@@ -7,9 +7,11 @@ import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
 import reactivemongo.bson.BSONObjectID
-import utils.JsonFormats.answerFormat
+import utils.JsonFormats._
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.Mongo._
+import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.IndexType
 
 case class Answer(name: String, voteCount: Int, questionId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
   def save() = {
@@ -27,6 +29,9 @@ case class Answer(name: String, voteCount: Int, questionId: BSONObjectID, _id: B
 
 object Answer {
   def collection: JSONCollection = db.collection[JSONCollection]("answers")
+
+  collection.indexesManager.ensure(
+    Index(List("questionId" -> IndexType.Ascending), unique = false))
 
   def find(_id: String): Future[Option[Answer]] = {
     collection.find(Json.obj("_id" -> BSONObjectID(_id))).one[Answer]

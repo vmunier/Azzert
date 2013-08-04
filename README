@@ -1,4 +1,7 @@
-This is your new Play 2.1 application
-=====================================
+La collection answer-history contient tout l'historique du nombre de votes d'une réponse.
 
-This file will be packaged with your application, when using `play dist`.
+On a fixé X=3
+Lorsque des personnes votent une question, les données sont accumulées puis insérée toutes les X secondes dans mongodb.
+Points importants :
+_ les entrées de la collection answer-history sont déjà ordonnées par date.
+_ deux entrées consécutives pour une même réponse ont au minimum X secondes d'intervale (plus de X secondes si il n'y a pas eu de votes sur une réponse pendant plus de X secs).

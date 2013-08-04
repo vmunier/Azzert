@@ -1,7 +1,6 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, titleService, questionResource, answerResource, voteResource, voteCountResource, questionChartService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, titleService, questionResource, answerResource, answerHistoryService, voteResource, voteCountResource, questionChartService) ->
 
   $scope.answers = []
-  $scope.votes = []
   $scope.questionId = $routeParams.id
 
   $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
@@ -9,15 +8,35 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
 
   answerIdToArrIndex = {'123az': 0}
 
-  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
-    for answer in $scope.answers
-      answerId = answer._id
-      $scope.votes[answerId] = voteResource.query {'questionId': $scope.questionId, 'answerId': answerId}
+  getAnswer = (answerId) ->
+    arrIdx = answerIdToArrIndex[answerId]
+    $scope.answers[arrIdx]
 
-  $scope.inc = (answerId, val) ->
+  addAnswerMapping = (answerId, arrIdx) ->
+    answerIdToArrIndex[answerId] = arrIdx
+
+  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
+    for answer, i in $scope.answers
+      answerId = answer._id
+      addAnswerMapping(answerId, i)
+      registerToAnswerEventSource(answerId)
+      console.log("$scope.answers : ", $scope.answers)
+      #console.log "$scope.votes[answerId] : ", $scope.votes[answerId]
+
+  registerToAnswerEventSource = (answerId) ->
+    answerHistoryService.withEventSource answerId, (feed) ->
+      feed.addEventListener 'message', ((e) ->
+        answerHistory = JSON.parse(e.data)
+        $scope.$apply () ->
+          console.log "--- : ", $scope.answers
+          getAnswer(answerId).voteCount = answerHistory.voteCount
+          console.log("answerHistory : ", answerHistory)
+      ), false
+
+  $scope.vote = (answerId, val) ->
     voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
-    $scope.votes[answerId] += val
+    getAnswer(answerId).voteCount += val
 
   dateLine = (num) ->
     key: "Line" + num
