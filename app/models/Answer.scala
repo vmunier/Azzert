@@ -11,7 +11,7 @@ import utils.JsonFormats.answerFormat
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.Mongo._
 
-case class Answer(name: String, questionId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
+case class Answer(name: String, voteCount: Int, questionId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
   def save() = {
     Answer.collection.insert(this)
   }
@@ -20,6 +20,7 @@ case class Answer(name: String, questionId: BSONObjectID, _id: BSONObjectID = BS
     Json.obj(
       "_id" -> _id.stringify,
       "name" -> name,
+      "voteCount" -> voteCount,
       "questionId" -> questionId.stringify)
   }
 }
@@ -33,5 +34,10 @@ object Answer {
 
   def findByQuestionId(questionId: String): Future[Seq[Answer]] = {
     collection.find(Json.obj("questionId" -> BSONObjectID(questionId))).cursor[Answer].toList
+  }
+
+  def incVoteCount(_id: String, inc: Int) = {
+    collection.update(Json.obj("_id" -> BSONObjectID(_id)),
+      Json.obj("$inc" -> Json.obj("voteCount" -> inc)))
   }
 }

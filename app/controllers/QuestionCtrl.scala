@@ -42,11 +42,10 @@ object QuestionCtrl extends Controller {
       formWithErrors => BadRequest(""),
       questionMapping => {
         val question = Question(questionMapping.name)
-        val answers = questionMapping.answers.map(Answer(_, question._id))
+        val answers = questionMapping.answers.map(Answer(_, 0, question._id))
         question.save()
         for (answer <- answers) {
           answer.save()
-          VoteCount(0, answer._id).save()
         }
 
         Ok("created")

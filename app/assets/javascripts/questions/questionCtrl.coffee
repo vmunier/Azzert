@@ -2,7 +2,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
 
   $scope.answers = []
   $scope.votes = []
-  $scope.voteCounts = []
   $scope.questionId = $routeParams.id
 
   $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
@@ -14,7 +13,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
     for answer in $scope.answers
       answerId = answer._id
       $scope.votes[answerId] = voteResource.query {'questionId': $scope.questionId, 'answerId': answerId}
-      $scope.voteCounts[answerId] = voteCountResource.get {'questionId': $scope.questionId, 'answerId': answerId}
 
   $scope.inc = (answerId, val) ->
     voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
