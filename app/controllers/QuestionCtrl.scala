@@ -3,6 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import models.Question
+import models.VoteCount
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.dataflow._
@@ -43,7 +44,11 @@ object QuestionCtrl extends Controller {
         val question = Question(questionMapping.name)
         val answers = questionMapping.answers.map(Answer(_, question._id))
         question.save()
-        answers.foreach(_.save())
+        for (answer <- answers) {
+          answer.save()
+          VoteCount(0, answer._id).save()
+        }
+
         Ok("created")
       })
   }

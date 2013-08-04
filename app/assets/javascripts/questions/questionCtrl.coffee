@@ -1,22 +1,24 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, titleService, questionResource, answerResource, questionChartService) ->
-
-
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, titleService, questionResource, answerResource, voteResource, voteCountResource, questionChartService) ->
 
   $scope.answers = []
   $scope.votes = []
+  $scope.voteCounts = []
   $scope.questionId = $routeParams.id
 
-  $scope.question = questionResource.get {'id': $scope.questionId}, () ->
+  $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
     titleService.set("Question #{$scope.question.name}")
 
   answerIdToArrIndex = {'123az': 0}
 
-  $scope.answers = answerResource.query {'id': $scope.questionId}, () ->
+  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
     for answer in $scope.answers
-      console.log("answer : ", answer)
-      $scope.votes[answer._id] = 0
+      answerId = answer._id
+      $scope.votes[answerId] = voteResource.query {'questionId': $scope.questionId, 'answerId': answerId}
+      $scope.voteCounts[answerId] = voteCountResource.get {'questionId': $scope.questionId, 'answerId': answerId}
 
   $scope.inc = (answerId, val) ->
+    voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
+    voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     $scope.votes[answerId] += val
 
   dateLine = (num) ->

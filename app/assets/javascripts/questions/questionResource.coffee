@@ -1,3 +1,3 @@
 angular.module('azzertApp').factory 'questionResource', ($resource) ->
 
-  $resource('/api/questions/:id', {id:'@id'} )
+  $resource('/api/questions/:questionId', {questionId:'@questionId'} )
