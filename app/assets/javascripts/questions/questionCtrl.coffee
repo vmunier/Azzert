@@ -6,7 +6,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
   $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
     titleService.set("Question #{$scope.question.name}")
 
-  answerIdToArrIndex = {'123az': 0}
+  answerIdToArrIndex = {}
 
   getAnswer = (answerId) ->
     arrIdx = answerIdToArrIndex[answerId]
@@ -19,67 +19,41 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
     for answer, i in $scope.answers
       answerId = answer._id
       addAnswerMapping(answerId, i)
+    createChart()
+    drawLoop()
     registerToAnswerEventSource($scope.questionId)
 
   registerToAnswerEventSource = (questionId) ->
     answerHistoryService.withEventSource questionId, (feed) ->
       feed.addEventListener 'message', ((e) ->
         answerHistory = JSON.parse(e.data)
-        console.log("answerHistory : ", answerHistory)
+        answerId = answerHistory.answerId
+        pushChartLine(answerId, answerHistory)
         $scope.$apply () ->
-          getAnswer(answerHistory.answerId).voteCount = answerHistory.voteCount
+          getAnswer(answerId).voteCount = answerHistory.voteCount
       ), false
+
+  drawLoop = () ->
+    console.log("draw!")
+    questionChartService.draw()
+    setTimeout drawLoop, 3500
+
+  createChart = () ->
+    lines = []
+    for answer in $scope.answers
+      lines.push(
+        key: answer.name
+        values: []
+      )
+    questionChartService.setData(lines)
+
+  pushChartLine = (answerId, answerHistory) ->
+    idx = answerIdToArrIndex[answerId]
+    date = new Date(answerHistory.date)
+    yVal = answerHistory.voteCount
+    questionChartService.pushLineData(idx, [date, yVal])
 
   $scope.vote = (answerId, val) ->
     voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     getAnswer(answerId).voteCount += val
-
-  dateLine = (num) ->
-    key: "Line" + num
-    values: range(0, 20).map((d) ->
-      currentDate = new Date()
-      currentDate.setDate currentDate.getDate() + d
-      yVal = Math.floor(Math.random() * 50) + 1
-      [currentDate.getTime(), yVal]
-    )
-
-  testDataWithDate = ->
-    range(0, 2).map (num) ->
-      dateLine num
-
-  testData = ->
-    lines = stream_layers(2, 20, .1)
-    lines.map (data, i) ->
-      key: "Stream" + i
-      values: data
-
-  range = (start, end) ->
-    foo = []
-    i = start
-
-    while i <= end
-      foo.push i
-      i++
-    foo
-
-  chartData = testDataWithDate()
-
-  questionChartService.setData(chartData)
-  questionChartService.draw()
-
-  chart = questionChartService.chart
-
-  pushLineData = (answerId, value) ->
-    idx = answerIdToArrIndex[answerId]
-    questionChartService.pushLineData(idx, value)
-
-  f = () ->
-    setTimeout () ->
-      for val in testDataWithDate()[0].values.slice(0, 4)
-        pushLineData('123az', val)
-      questionChartService.draw()
-      f()
-    ,
-      5000
-  # f()
