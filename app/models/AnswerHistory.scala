@@ -22,10 +22,19 @@ import utils.Redis
 import utils.EnumeratorUtil
 import play.api.libs.iteratee.Enumeratee
 import jobs.HistoryActor
+import play.api.libs.json.JsValue
 
 case class AnswerHistory(voteCount: Int, date: DateTime, answerId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
   def save() = {
     AnswerHistory.collection.insert(this)
+  }
+
+  def toJson:JsValue = {
+    Json.obj(
+      "_id" -> _id.stringify,
+      "voteCount" -> voteCount,
+      "date" -> date,
+      "answerId" -> answerId.stringify)
   }
 }
 

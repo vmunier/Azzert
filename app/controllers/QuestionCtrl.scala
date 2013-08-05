@@ -39,8 +39,6 @@ object QuestionCtrl extends Controller {
     }
   }
 
-  val total = 100000
-
   def save() = Action { implicit request =>
     questionForm.bindFromRequest.fold(
       formWithErrors => BadRequest(""),

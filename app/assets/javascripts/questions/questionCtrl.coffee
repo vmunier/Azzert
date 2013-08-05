@@ -19,18 +19,15 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
     for answer, i in $scope.answers
       answerId = answer._id
       addAnswerMapping(answerId, i)
-      registerToAnswerEventSource(answerId)
-      console.log("$scope.answers : ", $scope.answers)
-      #console.log "$scope.votes[answerId] : ", $scope.votes[answerId]
+    registerToAnswerEventSource($scope.questionId)
 
-  registerToAnswerEventSource = (answerId) ->
-    answerHistoryService.withEventSource answerId, (feed) ->
+  registerToAnswerEventSource = (questionId) ->
+    answerHistoryService.withEventSource questionId, (feed) ->
       feed.addEventListener 'message', ((e) ->
         answerHistory = JSON.parse(e.data)
+        console.log("answerHistory : ", answerHistory)
         $scope.$apply () ->
-          console.log "--- : ", $scope.answers
-          getAnswer(answerId).voteCount = answerHistory.voteCount
-          console.log("answerHistory : ", answerHistory)
+          getAnswer(answerHistory.answerId).voteCount = answerHistory.voteCount
       ), false
 
   $scope.vote = (answerId, val) ->
