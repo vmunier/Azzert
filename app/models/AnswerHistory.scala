@@ -50,7 +50,7 @@ object AnswerHistory {
 
   def getEnumerator(answerId: String): Future[Enumerator[AnswerHistory]] = flow {
     val history = getHistoryEnumerator(answerId)()
-    val live = getLiveEnumerator(answerId)
+    val live = getLiveEnumerator(answerId)()
     history.andThen(live)
   }
 
@@ -59,39 +59,16 @@ object AnswerHistory {
     Enumerator(answerHistorySeq: _*)
   }
 
-  def getLiveEnumerator(answerId: String): Enumerator[AnswerHistory] = {
-    val (enumerator, channel) = Concurrent.broadcast[AnswerHistory]
-    // retrieve a connection from the pool to prevent it from being shared.
-
-    val pool = Global.sedisPool.underlying
-    val client = pool.getResource()
-
-    val listener = new AnswerHistoryListener(channel)
-
-    // use a future because jedis subscribe is a blocking call
-    Future(client.subscribe(listener, liveKey(answerId)))(Redis.executionContext)
+  def getLiveEnumerator(answerId: String): Future[Enumerator[AnswerHistory]] = {
 
     def onDone(): Unit = {
+      HistoryActor.unsubscribe(answerId)
       println("onDone() has been called !")
-      listener.unsubscribe()
-      pool.returnResourceObject(client)
     }
 
-    // interleave with empty inputs continually to trigger onDone call when the iteratee is done
-    enumerator.interleave(EnumeratorUtil.emptyFlow).through(Enumeratee.onIterateeDone[AnswerHistory](onDone))
+    HistoryActor.subscribe(answerId).map { answerHistoryEnum =>
+      // interleave with empty inputs continually to trigger onDone call when the iteratee is done
+      answerHistoryEnum.interleave(EnumeratorUtil.emptyFlow).through(Enumeratee.onIterateeDone[AnswerHistory](onDone))
+    }
   }
-}
-
-// Listen to the logs sent by the droplet owning a running application.
-class AnswerHistoryListener(channel: Channel[AnswerHistory]) extends JedisPubSub {
-  override def onMessage(chan: String, message: String) {
-    val answerHistory = Json.parse(message).as[AnswerHistory]
-    channel.push(answerHistory)
-  }
-
-  def onSubscribe(m: String, c: Int) {}
-  def onUnsubscribe(m: String, c: Int) {}
-  def onPSubscribe(m: String, c: Int) {}
-  def onPUnsubscribe(m: String, c: Int) {}
-  def onPMessage(pattern: String, channel: String, message: String) {}
 }
