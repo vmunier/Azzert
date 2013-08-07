@@ -30,12 +30,4 @@ object AnswerHistoryCtrl extends Controller {
     }
   }
 
-  def sseAnswerSession(questionId: String, answerId: String) = Action {
-    Async {
-      flow {
-        val enumerator = AnswerHistory.getEnumerator(answerId)()
-        Ok.feed(enumerator.map(_.toJson).through(EventSource()).andThen(Enumerator.eof[String])).as("text/event-stream")
-      }
-    }
-  }
 }
