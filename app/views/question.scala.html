@@ -12,26 +12,28 @@
     </div>
     <div class="row">
       <div class="span1">
-	<div class="row">
-	  <button ng-click="vote(answer._id, 1)" class="span1 btn">
+        <div class="row">
+          <button ng-click="vote(answer._id, 1)" class="span1 btn">
             <strong style="color: red;">+1</strong>
-	  </button>
-	</div>
-	<div class="row">
-	  <button ng-click="vote(answer._id, -1)" class="span1 btn">
+          </button>
+        </div>
+        <div class="row">
+          <button ng-click="vote(answer._id, -1)" class="span1 btn">
             <strong style="color: orange;">-1</strong>
-	  </button>
-	</div>
+          </button>
+        </div>
       </div>
       <div class="span2">
-	{{answer.voteCount}}
+        {{answer.voteCount}}
       </div>
     </div>
   </div>
 
 </div>
 
-
-<div id="chart">
-  <svg style="height: 400px;"></svg>
+<div class="chartContainer">
+  <div class="chartLegend"></div>
+  <div class="yAxis"></div>
+  <div class="chart"></div>
+  <div id="slider"></div>
 </div>

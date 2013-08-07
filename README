@@ -5,3 +5,13 @@ Lorsque des personnes votent une question, les données sont accumulées puis in
 Points importants :
 _ les entrées de la collection answer-history sont déjà ordonnées par date.
 _ deux entrées consécutives pour une même réponse ont au minimum X secondes d'intervale (plus de X secondes si il n'y a pas eu de votes sur une réponse pendant plus de X secs).
+
+
+On rajoutera une vue pour consulter l'historique des votes d'une question.
+Ça sera une vue fixe qui ne sera pas mis à jour dynamiquement.
+L'acteur HistoryActor sauvegardera aussi l'historique dans Graphite et cette vue requêtera Graphite pour afficher le graphe d'historique.
+La collection mongodb AnswerHistory aura un ttl sur ses entrées pour qu'elle ne grossisse pas trop.
+C'est Graphite qui se chargera de stoker l'historique entier.
+D'ailleurs Graphite fait un travaille de compactage automatique.
+L'idée est qu'il garde seulement les 180 derniers jours de votes puis lorsque ça dépasse
+il fait une moyenne et garde une métrique pour chaque mois. Je ne sais pas si c'est réelement 180 jours.

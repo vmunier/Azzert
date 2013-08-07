@@ -20,38 +20,31 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, ti
       answerId = answer._id
       addAnswerMapping(answerId, i)
     createChart()
-    drawLoop()
     registerToAnswerEventSource($scope.questionId)
+
+  createChart = () ->
+    names = []
+    for answer in $scope.answers
+      names.push(answer.name)
+    questionChartService.create(names)
 
   registerToAnswerEventSource = (questionId) ->
     answerHistoryService.withEventSource questionId, (feed) ->
       feed.addEventListener 'message', ((e) ->
         answerHistory = JSON.parse(e.data)
         answerId = answerHistory.answerId
-        pushChartLine(answerId, answerHistory)
+        updateChartSerie(answerId, answerHistory)
         $scope.$apply () ->
           getAnswer(answerId).voteCount = answerHistory.voteCount
       ), false
 
-  drawLoop = () ->
-    console.log("draw!")
-    questionChartService.draw()
-    setTimeout drawLoop, 3500
-
-  createChart = () ->
-    lines = []
-    for answer in $scope.answers
-      lines.push(
-        key: answer.name
-        values: []
-      )
-    questionChartService.setData(lines)
-
-  pushChartLine = (answerId, answerHistory) ->
-    idx = answerIdToArrIndex[answerId]
-    date = new Date(answerHistory.date)
-    yVal = answerHistory.voteCount
-    questionChartService.pushLineData(idx, [date, yVal])
+  updateChartSerie = (answerId, answerHistory) ->
+    lineIdx = answerIdToArrIndex[answerId]
+    date = Math.floor(answerHistory.date / 1000)
+    point =
+      x:date
+      y:answerHistory.voteCount
+    questionChartService.addPoint(lineIdx, point)
 
   $scope.vote = (answerId, val) ->
     voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}

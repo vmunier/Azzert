@@ -1,30 +1,80 @@
 angular.module('azzertApp').service 'questionChartService', () ->
   self = @
 
-  self.data = []
+  palette = new Rickshaw.Color.Palette()
 
-  self.init = () ->
-    self.chart = nv.models.lineChart().x((d) ->
-      d[0]
-    ).y((d) ->
-      d[1] / 100
+  # when creating an empty graph, Rickshaw insert one fake point for each line.
+  # We want to remove these fake points as soon as we receive our first data points.
+  # This array is inited to true for each point and set to false when addPoint is called.
+  answerHasNoPoints = []
+
+  # create the graph and update it automatically every second.
+  create = (names) ->
+    series = []
+    for name, i in names
+      series.push(name:name)
+      answerHasNoPoints[i] = true
+
+    graph = new Rickshaw.Graph(
+      element: document.querySelector(".chart")
+      width: 960
+      height: 500
+      renderer: "line"
+      series: new Rickshaw.Series(series)
     )
-    # if the visitor is french, this should be %d-%m-%Y
-    # d3.time.format("%d-%m-%Y") new Date(d)
-    self.chart.xAxis.tickFormat (d) ->
-      d3.time.format("%Y-%m-%d") new Date(d)
-    self.chart.yAxis.tickFormat d3.format(",.1%")
-    nv.addGraph () ->
-      self.chart
 
-  self.init()
+    yTicks = new Rickshaw.Graph.Axis.Y(
+      graph: graph
+      orientation: "left"
+      tickFormat: Rickshaw.Fixtures.Number.formatKMBT
+      element: document.querySelector(".yAxis")
+    )
+    graph.render()
+    chartLegend = document.querySelector(".chartLegend")
+    Hover = Rickshaw.Class.create(Rickshaw.Graph.HoverDetail,
+      render: (args) ->
+        chartLegend.innerHTML = args.formattedXValue
+        args.detail.sort((a, b) ->
+          a.order - b.order
+        ).forEach ((d) ->
+          chartLegendBlock = document.createElement("div")
+          chartLegendBlock.className = "chartLegendBlock"
+          swatch = document.createElement("div")
+          swatch.className = "swatch"
+          swatch.style.backgroundColor = d.series.color
+          chartLegendLabel = document.createElement("div")
+          chartLegendLabel.className = "chartLegendLabel"
+          chartLegendLabel.innerHTML = d.name + ": " + d.formattedYValue
+          chartLegendBlock.appendChild swatch
+          chartLegendBlock.appendChild chartLegendLabel
+          chartLegend.appendChild chartLegendBlock
+          dot = document.createElement("div")
+          dot.className = "dot"
+          dot.style.top = graph.y(d.value.y0 + d.value.y) + "px"
+          dot.style.borderColor = d.series.color
+          @element.appendChild dot
+          dot.className = "dot active"
+          @show()
+        ), this
+    )
+    hover = new Hover(graph: graph)
 
-  self.setData = (data) ->
-    self.data = data
+    hoverDetail = new Rickshaw.Graph.HoverDetail(graph: graph)
 
-  self.pushLineData = (idx, value) ->
-    self.data[idx].values.push(value)
+    axes = new Rickshaw.Graph.Axis.Time(graph: graph)
+    axes.render()
 
-  self.draw = () ->
-    d3.select("#chart svg").datum(self.data).transition().duration(500).call self.chart
-    nv.utils.windowResize self.chart.update
+    setInterval(() ->
+      graph.update()
+    , 1000)
+    self.graph = graph
+
+  addPoint = (lineIdx, point) ->
+    serieData = self.graph.series[lineIdx].data
+    if answerHasNoPoints[lineIdx]
+      serieData.splice(0, 1)
+      answerHasNoPoints[lineIdx] = false
+    serieData.push(point)
+
+  self.create = create
+  self.addPoint = addPoint

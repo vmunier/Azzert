@@ -6,7 +6,10 @@
   <head>
     <title>{{pageTitle}}</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/angular-ui/build/angular-ui.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("customized-nvd3/nv.d3.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/rickshaw/src/css/graph.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/rickshaw/src/css/detail.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/rickshaw/src/css/legend.css")">
+
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
 
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
@@ -46,9 +49,12 @@
     <script src="@routes.Assets.at("components/angular-ui/common/module.js")"></script>
     <script src="@routes.Assets.at("components/angular-ui/build/angular-ui.js")"></script>
 
-    <script src="@routes.Assets.at("components/nvd3/lib/d3.v2.js")"></script>
-    <script src="@routes.Assets.at("components/nvd3/nv.d3.js")"></script>
-    <script src="@routes.Assets.at("customized-nvd3/stream_layers.js")"></script>
+    <script src="@routes.Assets.at("components/rickshaw/vendor/d3.v2.js")"></script>
+    <script src="@routes.Assets.at("components/rickshaw/rickshaw.js")"></script>
+    <!-- maybe Fixtures.Color can be removed -->
+    <!-- <script src="@routes.Assets.at("components/rickshaw/src/js/Rickshaw.Fixtures.Color.js")"></script> -->
+    <script src="@routes.Assets.at("components/rickshaw/src/js/Rickshaw.Color.Palette.js")"></script>
+
     <!-- my own javascript files -->
     <!-- routes.js needs to be loaded first and defines global dependencies such as 'ngCookies' and 'ngResource' -->
     <script src="@routes.Assets.at("javascripts/routes.js")"></script>

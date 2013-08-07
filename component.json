@@ -12,6 +12,6 @@
         "angular-ui": "0.4.0",
         "angular-bootstrap": "latest",
         "angular-ui-router": "latest",
-        "nvd3": "latest"
+        "rickshaw": "latest"
     }
 }
