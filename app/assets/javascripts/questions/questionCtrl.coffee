@@ -30,7 +30,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       method: 'GET'
       url: "/api/answerHistory/questions/#{$scope.questionId}"
       params:
-        interval: '1d'
+        interval: '1s'
     ).success( (answerHistoryList) ->
       createChart(answerHistoryList)
       registerToAnswerEventSource($scope.questionId)

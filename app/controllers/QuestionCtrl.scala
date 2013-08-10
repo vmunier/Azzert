@@ -13,6 +13,7 @@ import reactivemongo.bson.BSONObjectID
 import scala.concurrent.Await
 import akka.util.Timeout
 import scala.concurrent.duration.DurationInt
+import jobs.HistoryActor
 
 case class QuestionMapping(name: String, answers: Seq[String])
 
@@ -48,6 +49,7 @@ object QuestionCtrl extends Controller {
         question.save()
         for (answer <- answers) {
           answer.save()
+          HistoryActor.signalVoteChanged(answer._id.stringify)
         }
 
         Ok("created")
