@@ -17,6 +17,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
 
   seriesData = []
 
+  answerHistoryService.open($scope.questionId)
+
   initGlobals = (answers) ->
     for answer, i in answers
       answerId = answer._id
@@ -33,7 +35,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         interval: '1s'
     ).success( (answerHistoryList) ->
       createChart(answerHistoryList)
-      registerToAnswerEventSource($scope.questionId)
+      registerToAnswerEventSource()
     )
 
   createAnswerHistory = (answerId, voteCount, date) ->
@@ -47,15 +49,18 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       addPoint(answerHistory)
     questionChartService.create(names, seriesData)
 
-  registerToAnswerEventSource = (questionId) ->
-    answerHistoryService.withEventSource questionId, (feed) ->
-      feed.addEventListener 'message', ((e) ->
-        answerHistory = JSON.parse(e.data)
-        answerId = answerHistory.answerId
-        addPoint(answerHistory)
-        $scope.$apply () ->
-          getAnswer(answerId).voteCount = answerHistory.voteCount
-      ), false
+  answerHistoryListener = (e) ->
+    answerHistory = JSON.parse(e.data)
+    answerId = answerHistory.answerId
+    addPoint(answerHistory)
+    $scope.$apply () ->
+      getAnswer(answerId).voteCount = answerHistory.voteCount
+
+  registerToAnswerEventSource = () ->
+    answerHistoryService.eventSource.addEventListener 'message', answerHistoryListener, false
+
+  unregisterToAnswerEventSource = () ->
+    answerHistoryService.eventSource.removeEventListener 'message', answerHistoryListener, false
 
   addPoint = (answerHistory) ->
     lineIdx = answerIdToArrIndex[answerHistory.answerId]

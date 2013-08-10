@@ -1,7 +1,6 @@
 
 angular.module('azzertApp').service 'answerHistoryService', () ->
-  withEventSource = (questionId, body) ->
-    unless not window.EventSource
-      body(new EventSource("/api/answerHistory/questions/#{questionId}/sse"))
+  self = @
 
-  withEventSource: withEventSource
+  self.open = (questionId) ->
+    self.eventSource = new EventSource("/api/answerHistory/questions/#{questionId}/sse")
