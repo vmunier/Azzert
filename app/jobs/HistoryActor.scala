@@ -13,7 +13,6 @@ import akka.actor.actorRef2Scala
 import play.api.Play.current
 import models.Answer
 import akka.dataflow._
-import models.AnswerHistory
 import play.api.libs.json.Json
 import utils.JsonFormats._
 import org.joda.time.DateTime
@@ -26,6 +25,9 @@ import play.api.libs.iteratee.Concurrent.Channel
 import akka.util.Timeout
 import akka.pattern.ask
 import scala.concurrent.Future
+import models.AnswerHistory
+import utils.EnumeratorUtil
+import play.api.libs.iteratee.Enumeratee
 
 class HistoryActor extends Actor {
 
@@ -79,9 +81,10 @@ class HistoryActor extends Actor {
     (enumerator, channel)
   }
 
-  private def publishToLive(answerId: String) = flow {
+  private def publishToLive(answerId: String): Future[Unit] = flow {
     for (answer <- Answer.find(answerId)()) {
-      val answerHistory = AnswerHistory(answer.voteCount, new DateTime(), answer._id)
+      val answerHistory = AnswerHistory(answer.questionId.stringify, answer._id.stringify, answer.voteCount, new DateTime())
+      println("save answerHistory!!")
       answerHistory.save()
       for ((_, channel) <- sseEnums.get(answerId)) {
         channel.push(answerHistory)
@@ -116,5 +119,14 @@ object HistoryActor {
 
   def signalVoteChanged(answerId: String) = {
     historyActor ! VoteChanged(answerId)
+  }
+
+  def getLiveEnumerator(answerId: String): Future[Enumerator[AnswerHistory]] = {
+    def onDone(): Unit = { unsubscribe(answerId); println("onDone() has been called !") }
+
+    subscribe(answerId).map { answerHistoryEnum =>
+      // interleave with empty inputs continually to trigger onDone call when the iteratee is done
+      answerHistoryEnum.interleave(EnumeratorUtil.emptyFlow).through(Enumeratee.onIterateeDone[AnswerHistory](onDone))
+    }
   }
 }

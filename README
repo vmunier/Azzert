@@ -15,3 +15,11 @@ C'est Graphite qui se chargera de stoker l'historique entier.
 D'ailleurs Graphite fait un travaille de compactage automatique.
 L'idée est qu'il garde seulement les 180 derniers jours de votes puis lorsque ça dépasse
 il fait une moyenne et garde une métrique pour chaque mois. Je ne sais pas si c'est réelement 180 jours.
+
+Exemple de requête à OpenTSDB :
+http://localhost:4242/#start=2013/06/11-17:00:00&end=2013/06/11-17:36:31&m=avg:1s-avg:mytest2%7Banswer=*%7D&o=&yrange=%5B0:%5D&wxh=1420x594
+
+Je devrais utiliser OpenTSDB 2.0 une fois qu'elle sera sortie (https://github.com/OpenTSDB/opentsdb/tree/next).
+La version 1.0 d'OpenTSDB n'est quasiment plus mis à jour et certaines requêtes ne fonctionnent pas.
+L'api de la 2.0 va changer continuellement, donc il vaut mieux attendre que ça se stabilise avant de l'utiliser.
+La documentation de la 2.0 se trouve ici : http://opentsdb.net/docs/build/html/index.html .
