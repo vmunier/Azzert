@@ -3,17 +3,15 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
   palette = new Rickshaw.Color.Palette()
 
-  # when creating an empty graph, Rickshaw insert one fake point for each line.
-  # We want to remove these fake points as soon as we receive our first data points.
-  # This array is inited to true for each point and set to false when addPoint is called.
-  answerHasNoPoints = []
-
   # create the graph and update it automatically every second.
-  create = (names) ->
+  create = (names, seriesData) ->
     series = []
     for name, i in names
-      series.push(name:name)
-      answerHasNoPoints[i] = true
+      series.push(
+        name:name
+        data: seriesData[i]
+        color: palette.color()
+      )
 
     graph = new Rickshaw.Graph(
       element: document.querySelector('.chart')
@@ -25,7 +23,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
       interpolation: 'linear'
       stroke: true
       preserve: true
-      series: new Rickshaw.Series(series)
+      series: series
     )
 
     yTicks = new Rickshaw.Graph.Axis.Y(
@@ -74,12 +72,4 @@ angular.module('azzertApp').service 'questionChartService', () ->
     , 1000)
     self.graph = graph
 
-  addPoint = (lineIdx, point) ->
-    serieData = self.graph.series[lineIdx].data
-    if answerHasNoPoints[lineIdx]
-      serieData.splice(0, 1)
-      answerHasNoPoints[lineIdx] = false
-    serieData.push(point)
-
   self.create = create
-  self.addPoint = addPoint
