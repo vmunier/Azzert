@@ -15,16 +15,11 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   addAnswerMapping = (answerId, arrIdx) ->
     answerIdToArrIndex[answerId] = arrIdx
 
-  lastAnswerHistoryVote = {}
-  insertedForLastDate = {}
-
   seriesData = []
 
   initGlobals = (answers) ->
     for answer, i in answers
       answerId = answer._id
-      lastAnswerHistoryVote[answerId] = 0
-      insertedForLastDate[answerId] = false
       addAnswerMapping(answerId, i)
       seriesData.push([])
 
@@ -41,40 +36,16 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       registerToAnswerEventSource($scope.questionId)
     )
 
-  # add missing answerHistory points which do not exist for the answerHistory.date, it will reuse the last plotted point
-  addMissingPointsForDate = (date) ->
-    for answerId of insertedForLastDate
-      if not insertedForLastDate[answerId]
-        missingAnswerHistory = createAnswerHistory(answerId, lastAnswerHistoryVote[answerId], date)
-        addPoint(missingAnswerHistory)
-
   createAnswerHistory = (answerId, voteCount, date) ->
     answerId: answerId
     voteCount: voteCount
     date: date
 
-  resetInsertedForLastDate = () ->
-    for answerId of insertedForLastDate
-      insertedForLastDate[answerId] = false
-
   createChart = (answerHistoryList) ->
     names = $scope.answers.map( (answer) -> answer.name)
-
     for answerHistory, i in answerHistoryList
-      next = answerHistoryList[i + 1]
-      date = answerHistory.date
-      answerId = answerHistory.answerId
-
       addPoint(answerHistory)
-      lastAnswerHistoryVote[answerId] = answerHistory.voteCount
-      insertedForLastDate[answerId] = true
-
-      if next == undefined || next.date != date
-        addMissingPointsForDate(date)
-        resetInsertedForLastDate()
-
     questionChartService.create(names, seriesData)
-
 
   registerToAnswerEventSource = (questionId) ->
     answerHistoryService.withEventSource questionId, (feed) ->
@@ -91,11 +62,27 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     serie = seriesData[lineIdx]
     # divide by 1000 because Rickshaw uses dates at the second
     date = Math.floor(answerHistory.date / 1000)
+
     point =
       x:date
       y:answerHistory.voteCount
 
+    last = serie[serie.length - 1]
+    # remove the last element if it has the same date to replace it
+    if last != undefined and last.x == answerHistory.date
+      serie.pop()
     serie.push(point)
+    addMissingPointsForDate(date)
+
+  # add missing answerHistory points which do not exist for the date, it will reuse the last plotted point
+  addMissingPointsForDate = (date) ->
+    for serie in seriesData
+      lastSeriePoint = serie[serie.length - 1]
+      if lastSeriePoint != undefined and lastSeriePoint.x != date
+        point =
+          x: date
+          y: lastSeriePoint.y
+        serie.push(point)
 
   $scope.vote = (answerId, val) ->
     voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
