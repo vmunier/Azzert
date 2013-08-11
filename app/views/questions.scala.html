@@ -1,6 +1,24 @@
 @()
 
-Available questions :
-<div ng-repeat="q in questions">
-  <a href="/questions/{{q._id}}">{{q.name}}</a>
+<div class="row">
+  <div class="span10 offset1 text-center">
+    <hr />
+    <form class="questionForm form-inline">
+      <fieldset>
+        <label for="questionName">Question</label>
+        <input autofocus="autofocus" id="questionName" name="questionName" ng-model="questionName" size="30" type="text">
+      </fieldset>
+      <fieldset class="choices">
+        <label>Choices</label>
+        <input ng-repeat="answer in answers" size="30" type="text" ng-model="answer.text">
+        <small>Add up to 10 choices</small>
+      </fieldset>
+      <button class="btn btn-success" data-disable-with="Creating…" name="button" type="submit" ng-click="saveQuestion()">Create</button>
+    </form>
+
+    Available questions :
+    <div ng-repeat="q in questions">
+      <a href="/questions/{{q._id}}">{{q.name}}</a>
+    </div>
+  </div>
 </div>
