@@ -12,9 +12,9 @@
       <div ng-repeat="answer in answers | orderBy:'-voteCount'">
         <h2>{{answer.name}}</h2>
         <div>
-          <button class="minusBtn" type="button"><strong>-1</strong></button>
+          <button ng-click="vote(answer._id, -1)" class="minusBtn" type="button"><strong>-1</strong></button>
           <span class="votePercentage">{{answer.voteCount}} votes ({{votePercentage(answer.voteCount)}}%)</span>
-          <button class="plusBtn" type="button"><strong>+1</strong></button>
+          <button ng-click="vote(answer._id, +1)" class="plusBtn" type="button"><strong>+1</strong></button>
         </div>
         <div class="progress progress-striped active">
           <div class="bar" style="width: {{votePercentage(answer.voteCount)}}%;"></div>
