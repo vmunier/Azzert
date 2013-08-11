@@ -1,15 +1,23 @@
 angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, titleService, questionResource) ->
 
+  $scope.MaxAnswers = 10
+
   titleService.set("All Questions")
 
   $scope.questions = questionResource.query {}, () ->
     console.log("$scope.questions : ", $scope.questions)
 
-  $scope.answers = [{text:""}, {text:""}]
+  emptyAnswer = () ->
+    {text:""}
+
+  $scope.answers = [emptyAnswer(), emptyAnswer()]
+
+  $scope.checkToPushEmptyAnswer = () ->
+    lastAnswer = $scope.answers[$scope.answers.length - 1]
+    if lastAnswer.text != "" and $scope.answers.length < $scope.MaxAnswers
+      $scope.answers.push(emptyAnswer())
 
   $scope.saveQuestion = () ->
-    console.log $scope.questionName
-    console.log "answers : ", $scope.answers
     formParams = {name: $scope.questionName}
     answerIdx = 0
     for answer in $scope.answers
@@ -19,4 +27,3 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, titleService, q
 
     console.log("formParams : ", formParams)
     questionResource.save formParams
-    console.log "question saved"
