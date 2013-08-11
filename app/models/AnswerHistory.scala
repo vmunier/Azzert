@@ -30,6 +30,7 @@ import java.util.Date
 import java.net.URI
 import java.net.URL
 import play.api.libs.json.JsArray
+import scala.concurrent.duration._
 import utils.AzzertException
 
 case class AnswerHistory(questionId:String, answerId: String, voteCount: Int, date: DateTime) {
@@ -54,10 +55,9 @@ object AnswerHistory {
   val out = new PrintWriter(socket.getOutputStream(), true)
 
   private def get(query: String): Future[Seq[AnswerHistory]] = {
-    println("query : " + query)
     val url = new URL(s"http://localhost:4242/q?$query")
     val uri = new URI(url.getProtocol, url.getUserInfo, url.getHost, url.getPort, url.getPath, url.getQuery, url.getRef)
-    WS.url(uri.toURL.toString).get.flatMap {
+    WS.url(uri.toURL.toString).withTimeout(10.seconds.toMillis.toInt).get.flatMap {
       case response if response.status == 200 =>
         Future(response.body.split("\n").map(transformTsdbOutput(_)))
       case _ =>
@@ -81,7 +81,6 @@ object AnswerHistory {
     // That's why we pass a new date for the start parameter instead of using 1h-ago.
     val time = new Date().getTime() / 1000
     val formattedStart = start.toString("yyyy/MM/dd-HH:mm:ss")
-
     get(s"start=$formattedStart&m=avg:$interval-avg:$questionId{answer=$answerId}&ascii") map {
       // TODO : find a solution to have values sorted by date directly out of OpenTSDB
       _.sortBy { answerHistory => answerHistory.date.getMillis()

@@ -18,6 +18,7 @@ import models.Question
 import scala.concurrent.Future
 import org.joda.time.DateTime
 import jobs.HistoryActor
+import play.api.mvc.PlainResult
 
 object AnswerHistoryCtrl extends Controller {
   def sseQuestionSession(questionId: String) = Action {
@@ -37,13 +38,13 @@ object AnswerHistoryCtrl extends Controller {
 
   def history(questionId: String, interval: String) = Action {
     Async {
-      flow {
-        println("interval : " + interval)
+      val f = flow {
         val answers = Answer.findByQuestionId(questionId)()
         val start = new DateTime().minusDays(20)
         val history = AnswerHistory.find(start, interval, questionId)()
         Ok(JsArray(history.map(_.toJson))).as("application/json")
       }
+      f.fallbackTo(Future(BadRequest("Failed to process the history")))
     }
   }
 }
