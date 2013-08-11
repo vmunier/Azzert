@@ -10,7 +10,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     total
 
   $scope.votePercentage = (voteCount) ->
-    Math.floor(voteCount / totalVotes() * 100)
+    total = totalVotes()
+    if total == 0 then 0 else Math.floor(voteCount / total * 100)
 
   $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
     titleService.set("Question #{$scope.question.name}")
