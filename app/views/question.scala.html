@@ -1,40 +1,38 @@
 @()
+<div class="row text-center">
+  <div class="span10 offset1">
 
-<h2>{{question.name}}</h2>
+    <header class="questionName">
+      <h1>{{question.name}}</h1>
+    </header>
 
-<div class="row">
+    <hr />
 
-  <div class="span3" ng-repeat="answer in answers">
-    <div class="row">
-      <div class="span1">
-        {{answer.name}}
-      </div>
-    </div>
-    <div class="row">
-      <div class="span1">
-        <div class="row">
-          <button ng-click="vote(answer._id, 1)" class="span1 btn">
-            <strong style="color: red;">+1</strong>
-          </button>
+    <section class="answers">
+      <div ng-repeat="answer in answers | orderBy:'-voteCount'">
+        <h2>{{answer.name}}</h2>
+        <div>
+          <button class="minusBtn" type="button"><strong>-1</strong></button>
+          <span class="votePercentage">{{answer.voteCount}} votes ({{votePercentage(answer.voteCount)}}%)</span>
+          <button class="plusBtn" type="button"><strong>+1</strong></button>
         </div>
-        <div class="row">
-          <button ng-click="vote(answer._id, -1)" class="span1 btn">
-            <strong style="color: orange;">-1</strong>
-          </button>
+        <div class="progress progress-striped active">
+          <div class="bar" style="width: {{votePercentage(answer.voteCount)}}%;"></div>
         </div>
       </div>
-      <div class="span2">
-        {{answer.voteCount}}
+    </section>
+
+    <hr />
+
+    <section class="chartSection">
+      <div class="chartLegend"></div>
+
+      <div class="chartContainer">
+        <div class="yAxis"></div>
+        <div class="chart"></div>
+        <div id="slider"></div>
       </div>
-    </div>
+    </section>
+
   </div>
-
-</div>
-
-<div class="chartLegend"></div>
-
-<div class="chartContainer">
-  <div class="yAxis"></div>
-  <div class="chart"></div>
-  <div id="slider"></div>
 </div>

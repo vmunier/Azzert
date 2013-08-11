@@ -1,11 +1,56 @@
 @import "../../../public/components/bootstrap/less/bootstrap";
 
-.body {
+body {
+    border-top: 5px solid grey;
     background: white;
+}
+
+.container {
+    margin-top: 4em;
+}
+
+.chartSection {
+    margin-top: 4em;
 }
 
 svg {
     display: block;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 36px;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 36px;
+}
+
+.voteBtn {
+    .btn;
+    .btn-large;
+}
+
+.minusBtn {
+    .voteBtn;
+    float:left;
+    strong {
+        color: orange;
+    }
+}
+
+.plusBtn {
+    .voteBtn;
+    float:right;
+    strong {
+        color: red;
+    }
+}
+
+.votePercentage {
+    color: grey;
+    font-size: 18px;
 }
 
 @import "chart";

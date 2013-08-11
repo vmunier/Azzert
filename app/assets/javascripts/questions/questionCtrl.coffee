@@ -3,6 +3,15 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.answers = []
   $scope.questionId = $routeParams.id
 
+  totalVotes = () ->
+    total = 0
+    for answer in $scope.answers
+      total += answer.voteCount
+    total
+
+  $scope.votePercentage = (voteCount) ->
+    Math.floor(voteCount / totalVotes() * 100)
+
   $scope.question = questionResource.get {'questionId': $scope.questionId}, () ->
     titleService.set("Question #{$scope.question.name}")
 
@@ -47,7 +56,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
-    questionChartService.create(names, seriesData)
+    chart = questionChartService.create(names, seriesData)
+    console.log "chart : ", chart
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
