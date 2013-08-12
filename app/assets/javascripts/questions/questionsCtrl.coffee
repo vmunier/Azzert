@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, titleService, questionResource) ->
+angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titleService, questionResource) ->
 
   $scope.MaxAnswers = 10
 
@@ -17,6 +17,10 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, titleService, q
     if lastAnswer.text != "" and $scope.answers.length < $scope.MaxAnswers
       $scope.answers.push(emptyAnswer())
 
+  saveSuccess = (questionIdData) ->
+    questionId = questionIdData.data
+    $location.path("/questions/#{questionId}")
+
   $scope.saveQuestion = () ->
     formParams = {name: $scope.questionName}
     answerIdx = 0
@@ -26,4 +30,4 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, titleService, q
         answerIdx += 1
 
     console.log("formParams : ", formParams)
-    questionResource.save formParams
+    questionResource.save formParams, saveSuccess

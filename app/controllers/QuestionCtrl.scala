@@ -52,7 +52,7 @@ object QuestionCtrl extends Controller {
           HistoryActor.signalVoteChanged(answer._id.stringify)
         }
 
-        Ok("created")
+        Ok(question._id.stringify)
       })
   }
 }

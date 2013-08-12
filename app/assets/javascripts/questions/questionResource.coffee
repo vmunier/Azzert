@@ -1,3 +1,7 @@
-angular.module('azzertApp').factory 'questionResource', ($resource) ->
+angular.module('azzertApp').factory 'questionResource', ($resource, resourceService) ->
 
-  $resource('/api/questions/:questionId', {questionId:'@questionId'} )
+  $resource('/api/questions/:questionId', {questionId:'@questionId'},
+    save:
+      method: 'POST'
+      transformResponse: resourceService.simpleTransformResponse
+   )
