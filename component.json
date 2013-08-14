@@ -1,17 +1,17 @@
 {
-    "_comment" : "I created a .bowerrc file in which the default directory path for components is stated to be public/components.",
-    "name": "azzert",
-    "version": "0.0.0",
-    "dependencies": {
-        "jquery": "latest",
-        "jquery.cookie": "latest",
-        "unstable-angular-complete": "latest",
-        "json3": "~3.2.4",
-        "es5-shim": "~2.0.8",
-        "bootstrap": "2.3.1",
-        "angular-ui": "0.4.0",
-        "angular-bootstrap": "latest",
-        "angular-ui-router": "latest",
-        "rickshaw": "latest"
-    }
+  "_comment" : "I created a .bowerrc file in which the default directory path for components is stated to be public/components.",
+  "name": "azzert",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "latest",
+    "jquery.cookie": "latest",
+    "unstable-angular-complete": "latest",
+    "json3": "~3.2.4",
+    "es5-shim": "~2.0.8",
+    "bootstrap": "2.3.1",
+    "angular-ui": "0.4.0",
+    "angular-bootstrap": "latest",
+    "angular-ui-router": "latest",
+    "rickshaw": "latest"
+  }
 }
