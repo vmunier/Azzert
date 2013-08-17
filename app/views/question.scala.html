@@ -9,7 +9,8 @@
     <hr />
 
     <section class="answers">
-      <div ng-repeat="answer in answers | orderBy:'-voteCount'">
+      <!-- the animated classes come from animate.css (http://daneden.me/animate/) -->
+      <div ng-animate="{move:'animated fadeInLeftBig'}" ng-repeat="answer in answers | orderBy:'-voteCount'">
         <h2>{{answer.name}}</h2>
         <div>
           <button ng-click="vote(answer._id, -1)" class="minusBtn" type="button"><strong>-1</strong></button>
