@@ -18,7 +18,7 @@
           <button ng-click="vote(answer._id, +1)" class="plusBtn" type="button"><strong>+1</strong></button>
         </div>
         <div class="progress progress-striped active">
-          <div class="bar" style="width: {{votePercentage(answer.voteCount)}}%;"></div>
+          <div class="bar" style="width: {{votePercentage(answer.voteCount)}}%; background-color:{{answer.color}};"></div>
         </div>
       </div>
     </section>

@@ -29,7 +29,14 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
 
   answerHistoryService.open($scope.questionId)
 
+  addColors = (answers) ->
+    palette = new Rickshaw.Color.Palette()
+    for answer in answers
+      answer.color = palette.color()
+      console.log answer.color
+
   initGlobals = (answers) ->
+    addColors(answers)
     for answer, i in answers
       answerId = answer._id
       addAnswerMapping(answerId, i)
@@ -59,7 +66,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
-    chart = questionChartService.create(names, seriesData)
+    chart = questionChartService.create($scope.answers, seriesData)
     console.log "chart : ", chart
 
   answerHistoryListener = (e) ->

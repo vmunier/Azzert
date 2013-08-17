@@ -1,16 +1,14 @@
 angular.module('azzertApp').service 'questionChartService', () ->
   self = @
 
-  palette = new Rickshaw.Color.Palette()
-
   # create the graph and update it automatically every second.
-  create = (names, seriesData) ->
+  create = (answers, seriesData) ->
     series = []
-    for name, i in names
+    for answer, i in answers
       series.push(
-        name:name
+        name: answer.name
+        color: answer.color
         data: seriesData[i]
-        color: palette.color()
       )
 
     graph = new Rickshaw.Graph(
