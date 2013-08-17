@@ -23,11 +23,14 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
 
   $scope.saveQuestion = () ->
     formParams = {name: $scope.questionName}
-    answerIdx = 0
-    for answer in $scope.answers
-      if answer.text != ""
-        formParams["answers[#{answerIdx}]"] = answer.text
-        answerIdx += 1
+    answers = excludeEmptyAnswers()
+    for answer, i in answers
+      formParams["answers[#{i}]"] = answer.text
 
-    console.log("formParams : ", formParams)
     questionResource.save formParams, saveSuccess
+
+  excludeEmptyAnswers = () ->
+    $scope.answers.filter((answer) -> answer.text != "")
+
+  $scope.onlyEmptyAnswers = () ->
+    excludeEmptyAnswers().length == 0

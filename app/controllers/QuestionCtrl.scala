@@ -26,7 +26,8 @@ object QuestionCtrl extends Controller {
   val questionForm: Form[QuestionMapping] = Form(
     mapping(
       "name" -> nonEmptyText,
-      "answers" -> seq(nonEmptyText))(QuestionMapping.apply)(QuestionMapping.unapply))
+      "answers" -> seq(nonEmptyText).verifying("A question should have at least 1 answer and at most 10 answers", answers => 1 <= answers.size && answers.size <= 10)
+    )(QuestionMapping.apply)(QuestionMapping.unapply))
 
   def question(id: String) = Action {
     Async {
@@ -42,7 +43,7 @@ object QuestionCtrl extends Controller {
 
   def save() = Action { implicit request =>
     questionForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(""),
+      formWithErrors => BadRequest(formWithErrors.errorsAsJson),
       questionMapping => {
         val question = Question(questionMapping.name)
         val answers = questionMapping.answers.map(Answer(_, 0, question._id))
