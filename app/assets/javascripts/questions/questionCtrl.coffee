@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, voteCountResource, questionChartService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, questionChartService) ->
 
   $scope.answers = []
   $scope.questionId = $routeParams.id
@@ -46,6 +46,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     ).success( (answerHistoryList) ->
       createChart(answerHistoryList)
       registerToAnswerEventSource()
+    ).error( (reason) ->
+      console.log "reason : ", reason
     )
 
   createAnswerHistory = (answerId, voteCount, date) ->
@@ -101,6 +103,5 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         serie.push(point)
 
   $scope.vote = (answerId, val) ->
-    voteCountResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'inc': val}
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     getAnswer(answerId).voteCount += val

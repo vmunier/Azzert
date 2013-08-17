@@ -34,19 +34,4 @@ object AnswerCtrl extends Controller {
       }
     }
   }
-
-  def incVoteCount(questionId: String, answerId: String, inc: Int) = Action {
-    Async {
-      flow {
-        if (!(inc == -1 || inc == 1)) {
-          BadRequest("authorized vote values : -1 or 1")
-        } else {
-          Answer.incVoteCount(answerId, inc).map { _ =>
-            HistoryActor.signalVoteChanged(answerId)
-          }
-          Ok("")
-        }
-      }
-    }
-  }
 }
