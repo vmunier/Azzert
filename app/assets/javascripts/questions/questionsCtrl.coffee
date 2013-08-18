@@ -1,6 +1,7 @@
 angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titleService, questionResource) ->
 
   $scope.MaxAnswers = 10
+  $scope.questionName = ""
 
   titleService.set("All Questions")
 
@@ -32,5 +33,5 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
   excludeEmptyAnswers = () ->
     $scope.answers.filter((answer) -> answer.text != "")
 
-  $scope.onlyEmptyAnswers = () ->
-    excludeEmptyAnswers().length == 0
+  $scope.invalidQuestionForm = () ->
+    excludeEmptyAnswers().length == 0 or $scope.questionName == ""

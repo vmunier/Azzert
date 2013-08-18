@@ -13,7 +13,7 @@
         <input ng-repeat="answer in answers" size="30" type="text" ng-model="answer.text" ui-event="{keyup: 'checkToPushEmptyAnswer()'}">
         <small>Add up to {{MaxAnswers}} choices</small>
       </fieldset>
-      <button ng-click="saveQuestion()" ng-disabled="onlyEmptyAnswers()" class="btn btn-success" data-disable-with="Creating…" name="button" type="submit">Create</button>
+      <button ng-click="saveQuestion()" ng-disabled="invalidQuestionForm()" class="btn btn-success" data-disable-with="Creating…" name="button" type="submit">Create</button>
     </form>
 
     Available questions :
