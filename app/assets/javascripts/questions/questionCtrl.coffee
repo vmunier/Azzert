@@ -112,3 +112,5 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.vote = (answerId, val) ->
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     getAnswer(answerId).voteCount += val
+
+  $scope.chartTime = "3"
