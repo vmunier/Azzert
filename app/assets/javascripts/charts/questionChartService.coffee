@@ -13,7 +13,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
     graph = new Rickshaw.Graph(
       element: document.querySelector('.chart')
-      width: 960
+      width: 780
       height: 500
       renderer: 'line'
       # 'linear' interpolation is used to have straight lines,
