@@ -25,16 +25,7 @@
 
     <hr />
 
-    <select ng-model="chartTime" bs-selectbox>
-      <option value="1">Any Time</option>
-      <option value="2">Past hour</option>
-      <option value="3">Past 24 hours</option>
-      <option value="4">Past week</option>
-      <option value="5">Past month</option>
-      <option value="6">Past year</option>
-      <option value="7">Custom range...</option>
-    </select>
-    <span>You've selected: {{chartTime}}</span>
+    @chartTimeMenu()
 
     <section class="chartSection">
       <div class="chartLegend"></div>
