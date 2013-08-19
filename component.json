@@ -13,6 +13,7 @@
     "angular-ui": "0.4.0",
     "angular-bootstrap": "latest",
     "angular-ui-router": "latest",
-    "rickshaw": "latest"
+    "rickshaw": "latest",
+    "datejs": "latest"
   }
 }
