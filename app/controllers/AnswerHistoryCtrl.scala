@@ -36,11 +36,11 @@ object AnswerHistoryCtrl extends Controller {
     }
   }
 
-  def history(questionId: String, interval: String) = Action {
+  def history(questionId: String, startTimestamp: Long, interval: String) = Action {
     Async {
       val f = flow {
         val answers = Answer.findByQuestionId(questionId)()
-        val start = new DateTime().minusDays(20)
+        val start = new DateTime(startTimestamp)
         val history = AnswerHistory.find(start, interval, questionId)()
         Ok(JsArray(history.map(_.toJson))).as("application/json")
       }

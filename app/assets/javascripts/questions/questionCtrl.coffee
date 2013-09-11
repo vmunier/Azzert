@@ -33,7 +33,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     palette = new Rickshaw.Color.Palette()
     for answer in answers
       answer.color = palette.color()
-      console.log answer.color
 
   initGlobals = (answers) ->
     addColors(answers)
@@ -42,15 +41,18 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       addAnswerMapping(answerId, i)
       seriesData.push([])
 
-  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
-    initGlobals($scope.answers)
-
+  loadHistory = (start, interval) ->
     $http(
       method: 'GET'
       url: "/api/answerHistory/questions/#{$scope.questionId}"
       params:
-        interval: '1s'
-    ).success( (answerHistoryList) ->
+        startTimestamp: start.getTime().toString()
+        interval: interval
+    )
+
+  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
+    initGlobals($scope.answers)
+    loadHistory(new Date(0), '1s').success( (answerHistoryList) ->
       createChart(answerHistoryList)
       registerToAnswerEventSource()
     ).error( (reason) ->
@@ -66,8 +68,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
-    chart = questionChartService.create($scope.answers, seriesData)
-    console.log "chart : ", chart
+    questionChartService.create($scope.answers, seriesData)
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
@@ -113,7 +114,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     getAnswer(answerId).voteCount += val
 
-  console.log("chartTimeOptions : ", chartTimeService.chartTimeOptions)
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
     console.log("past date : ", chartTime.value())
