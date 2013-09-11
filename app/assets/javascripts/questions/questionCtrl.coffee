@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, questionChartService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, questionChartService, chartTimeService) ->
 
   $scope.answers = []
   $scope.questionId = $routeParams.id
@@ -113,29 +113,10 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
     getAnswer(answerId).voteCount += val
 
+  console.log("chartTimeOptions : ", chartTimeService.chartTimeOptions)
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
-    console.log("clicked : ", chartTime.value)
-    console.log("label : ", chartTime.label)
+    console.log("past date : ", chartTime.value())
 
-  $scope.chartTimeOptions = [
-    label:"Any Time"
-    value: 2
-  ,
-    label:"Past hour"
-    value: 3
-  ,
-    label:"Past 24 hours"
-    value: 4
-  ,
-    label:"Past week"
-    value: 5
-  ,
-    label:"Past month"
-    value: 6
-  ,
-    label:"Past year"
-    value: 7
-  ]
-
+  $scope.chartTimeOptions = chartTimeService.chartTimeOptions
   $scope.selectedChartTime = $scope.chartTimeOptions[0]
