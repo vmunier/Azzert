@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType
 
-case class Vote(value: Int, date: DateTime = new DateTime(), answerId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
+case class Vote(value: Int, date: DateTime = new DateTime(), ipAddress: String, answerId: BSONObjectID, _id: BSONObjectID = BSONObjectID.generate) {
   def save() = {
     Vote.collection.insert(this)
   }
@@ -21,6 +21,7 @@ case class Vote(value: Int, date: DateTime = new DateTime(), answerId: BSONObjec
     Json.obj(
       "_id" -> _id.stringify,
       "value" -> value,
+      "ipAddress" -> ipAddress,
       "answerId" -> answerId.stringify,
       "date" -> date)
   }
@@ -38,5 +39,9 @@ object Vote {
 
   def findByAnswerId(answerId: String): Future[Seq[Vote]] = {
     collection.find(Json.obj("answerId" -> BSONObjectID(answerId))).cursor[Vote].toList
+  }
+
+  def findAnswerVoteByIp(answerId: String, ipAddress: String): Future[Option[Vote]] = {
+    collection.find(Json.obj("answerId" -> BSONObjectID(answerId), "ipAddress" -> ipAddress)).one[Vote]
   }
 }

@@ -12,6 +12,9 @@ import models.Vote
 import reactivemongo.bson.BSONObjectID
 import org.joda.time.DateTime
 import jobs.HistoryActor
+import play.api.mvc.Result
+import scala.concurrent.Future
+import play.api.mvc.SimpleResult
 
 object VoteCtrl extends Controller {
   def votes(questionId: String, answerId: String) = Action {
@@ -24,24 +27,30 @@ object VoteCtrl extends Controller {
     }
   }
 
-  def save(questionId: String, answerId: String, vote: Int) = Action {
+  def save(questionId: String, answerId: String, vote: Int) = Action { request =>
     Async {
-      flow {
-        if (!(vote == -1 || vote == 1)) {
-          BadRequest("authorized vote values : -1 or 1")
-        } else {
-          Answer.find(answerId)().map { answer =>
+      if (!(vote == -1 || vote == 1)) {
+        Future(BadRequest("authorized vote values : -1 or 1"))
+      } else {
+        Answer.find(answerId).flatMap { maybeAnswer =>
+          maybeAnswer.map { answer =>
             println("answer.voteCount : " + answer.voteCount)
             if (answer.voteCount <= 0 && vote == -1) {
-              BadRequest("An answer with 0 vote cannot be downvoted")
+              Future(BadRequest("An answer with 0 vote cannot be downvoted"))
             } else {
-              Answer.incVoteCount(answerId, vote).map { _ =>
-                Vote(vote, new DateTime(), BSONObjectID(answerId)).save()
-                HistoryActor.signalVoteChanged(answerId)
+              Vote.findAnswerVoteByIp(answerId, request.remoteAddress).map { maybePreviousVote =>
+                maybePreviousVote.map { previousVote =>
+                  BadRequest(s"You already voted for this answer at the date ${previousVote.date}")
+                }.getOrElse {
+                  Answer.incVoteCount(answerId, vote).map { _ =>
+                    Vote(vote, new DateTime(), request.remoteAddress, BSONObjectID(answerId)).save()
+                    HistoryActor.signalVoteChanged(answerId)
+                  }
+                  Ok((answer.voteCount + vote).toString)
+                }
               }
-              Ok((answer.voteCount + vote).toString)
             }
-          }.getOrElse(NotFound(s"answer with id $answerId does not exist"))
+          }.getOrElse(Future(NotFound(s"answer with id $answerId does not exist")))
         }
       }
     }
