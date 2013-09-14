@@ -65,6 +65,11 @@ angular.module('azzertApp').service 'questionChartService', () ->
     axes = new Rickshaw.Graph.Axis.Time(graph: graph)
     axes.render()
 
+    slider = new Rickshaw.Graph.RangeSlider(
+      graph: graph,
+      element: $('#slider')
+    )
+
     setInterval(() ->
       graph.update()
     , 1000)
