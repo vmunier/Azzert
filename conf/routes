@@ -3,25 +3,26 @@
 # ~~~~
 
 # Home page
-GET    /                                                             controllers.Application.index(any = "none")
+GET    /                                                          controllers.Application.index(any = "none")
 
-GET    /views/question                                               controllers.QuestionCtrl.questionPage
-GET    /views/questions                                              controllers.QuestionsCtrl.questionsPage
+GET    /views/question                                            controllers.QuestionCtrl.questionPage
+GET    /views/questions                                           controllers.QuestionsCtrl.questionsPage
 
-GET    /api/questions                                                controllers.QuestionsCtrl.questions
-POST   /api/questions                                                controllers.QuestionCtrl.save
-GET    /api/questions/:id                                            controllers.QuestionCtrl.question(id)
+GET    /api/questions                                             controllers.QuestionsCtrl.questions
+POST   /api/questions                                             controllers.QuestionCtrl.save
+GET    /api/questions/:id                                         controllers.QuestionCtrl.question(id)
 
-GET    /api/questions/:id/answers                                    controllers.AnswerCtrl.answers(id)
-GET    /api/questions/:questionId/answers/:answerId                  controllers.AnswerCtrl.answer(questionId, answerId)
+GET    /api/questions/:id/answers                                 controllers.AnswerCtrl.answers(id)
+GET    /api/questions/:questionId/answers/:answerId               controllers.AnswerCtrl.answer(questionId, answerId)
 
 #GET    /api/questions/:questionId/answers/:answerId/votes            controllers.VoteCtrl.votes(questionId, answerId)
-POST   /api/questions/:questionId/answers/:answerId/votes/:vote      controllers.VoteCtrl.save(questionId, answerId, vote:Int)
+POST   /api/questions/:questionId/answers/:answerId/votes/:vote   controllers.VoteCtrl.save(questionId, answerId, vote:Int)
+GET    /api/questions/:questionId/answers/:answerId/voteByIp      controllers.VoteCtrl.getVoteByIp(questionId, answerId)
 
-GET    /api/answerHistory/questions/:questionId                      controllers.AnswerHistoryCtrl.history(questionId, startTimestamp:Long, interval)
-GET    /api/answerHistory/questions/:questionId/sse                  controllers.AnswerHistoryCtrl.sseQuestionSession(questionId)
+GET    /api/answerHistory/questions/:questionId                   controllers.AnswerHistoryCtrl.history(questionId, startTimestamp:Long, interval)
+GET    /api/answerHistory/questions/:questionId/sse               controllers.AnswerHistoryCtrl.sseQuestionSession(questionId)
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file                                                 controllers.Assets.at(path="/public", file)
+GET    /assets/*file                                              controllers.Assets.at(path="/public", file)
 
-GET    /*any                                                         controllers.Application.index(any)
+GET    /*any                                                      controllers.Application.index(any)

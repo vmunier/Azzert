@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, questionChartService, chartTimeService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, voteByIpResource, questionChartService, chartTimeService) ->
 
   $scope.answers = []
   $scope.questionId = $routeParams.id
@@ -38,8 +38,14 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     addColors(answers)
     for answer, i in answers
       answerId = answer._id
+      setAnswerAlreadyVoted(answer)
       addAnswerMapping(answerId, i)
       seriesData.push([])
+
+  setAnswerAlreadyVoted = (answer) ->
+    answer.alreadyVoted = false
+    voteByIpResource.get {'questionId': $scope.questionId, 'answerId': answer._id}, () ->
+      answer.alreadyVoted = true
 
   loadHistory = (start, interval) ->
     $http(

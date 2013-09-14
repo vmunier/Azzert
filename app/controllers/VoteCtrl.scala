@@ -55,4 +55,16 @@ object VoteCtrl extends Controller {
       }
     }
   }
+
+  def getVoteByIp(questionId: String, answerId: String) = Action { request =>
+    Async {
+      Vote.findAnswerVoteByIp(answerId, request.remoteAddress).map { maybePreviousVote =>
+        maybePreviousVote.map { previousVote =>
+          Ok(previousVote.toJson)
+        }.getOrElse {
+          NotFound("You did not vote for this answer")
+        }
+      }
+    }
+  }
 }
