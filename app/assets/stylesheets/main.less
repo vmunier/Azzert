@@ -1,12 +1,45 @@
 @import "../../../public/components/bootstrap/less/bootstrap";
 
-body {
-    border-top: 5px solid grey;
-    background: white;
+@footerHeight: 20px;
+@headerHeight: 5px;
+
+html {
+    height: 100%;
 }
 
-.container {
-    margin-top: 4em;
+body {
+    height: 100%;
+    background: white;
+
+    > header {
+        background: grey;
+        clear: both;
+        position: relative;
+        height: @headerHeight;
+        margin-bottom: -@headerHeight;
+    }
+
+    > .container {
+        height: auto;
+        min-height: 100%;
+
+        > div {
+            padding-top: (@headerHeight + 10);
+            padding-bottom: (@footerHeight + 10);
+        }
+    }
+
+    > footer {
+        background: #343434;
+        color: #fff;
+        text-align: center;
+
+        // tuto to have a footer which sticks the bottom of the page : http://www.lwis.net/journal/2008/02/08/pure-css-sticky-footer/
+        clear: both;
+        position: relative;
+        height: @footerHeight;
+        margin-top: -@footerHeight;
+    }
 }
 
 .chartSection {

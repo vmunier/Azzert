@@ -27,11 +27,17 @@
         <script src="@routes.Assets.at("components/json3/lib/json3.min.js")"></script>
         <![endif]-->
 
+    <header></header>
     <!-- Add your site or application content here -->
     <div class="container">
       <!-- content will go to the ng-view div -->
       <div ng-view></div>
     </div>
+    <footer>
+      <p>
+        Built by <a href="https://github.com/vmunier" title="vmunier github">Vincent Munier</a>
+      </p>
+    </footer>
 
     <!-- javascripts libs -->
     <script src="@routes.Assets.at("javascripts/EventSource.js")"></script>
