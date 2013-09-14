@@ -43,9 +43,15 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       seriesData.push([])
 
   setAnswerAlreadyVoted = (answer) ->
-    answer.alreadyVoted = false
-    voteByIpResource.get {'questionId': $scope.questionId, 'answerId': answer._id}, () ->
-      answer.alreadyVoted = true
+    answer.previousVote = 0
+    voteByIpResource.get {'questionId': $scope.questionId, 'answerId': answer._id}, (vote) ->
+      answer.previousVote = vote.value
+
+  $scope.getMinusClassBtn = (answer) ->
+    if answer.previousVote == -1 then "votedMinusBtn" else "minusBtn"
+
+  $scope.getPlusClassBtn = (answer) ->
+    if answer.previousVote == 1 then "votedPlusBtn" else "plusBtn"
 
   loadHistory = (start, interval) ->
     $http(
