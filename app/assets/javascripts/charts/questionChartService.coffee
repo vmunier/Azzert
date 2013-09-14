@@ -13,7 +13,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
     graph = new Rickshaw.Graph(
       element: document.querySelector('.chart')
-      width: 780
+      width: 760
       height: 500
       renderer: 'line'
       # 'linear' interpolation is used to have straight lines,
@@ -67,7 +67,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
     slider = new Rickshaw.Graph.RangeSlider(
       graph: graph,
-      element: $('#slider')
+      element: $('.slider')
     )
 
     setInterval(() ->
