@@ -111,8 +111,11 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         serie.push(point)
 
   $scope.vote = (answerId, val) ->
-    voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}
-    getAnswer(answerId).voteCount += val
+    saveSuccess = () ->
+      getAnswer(answerId).voteCount += val
+    saveFailure = (reason) ->
+      console.log("reason : ", reason)
+    voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}, saveSuccess, saveFailure
 
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
