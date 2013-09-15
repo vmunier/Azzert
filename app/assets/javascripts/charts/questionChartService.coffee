@@ -30,25 +30,56 @@ angular.module('azzertApp').service 'questionChartService', () ->
       tickFormat: Rickshaw.Fixtures.Number.formatKMBT
       element: document.querySelector('.yAxis')
     )
-    graph.render()
+
     chartLegend = document.querySelector('.chartLegend')
+
+    chartLegendDate = document.createElement('span')
+    chartLegendDate.className = 'chartLegendDate'
+
+    chartLegend.appendChild(chartLegendDate)
+
+    chartLegendValues = []
+
+    setOnclick = (chartLegendBlock, line) ->
+      chartLegendBlock.onclick = (e) ->
+        if line.disabled
+          line.enable()
+        else
+          line.disable()
+
+    for line, idx in series
+      chartLegendBlock = document.createElement('div')
+      chartLegendBlock.className = 'chartLegendBlock'
+      swatch = document.createElement('div')
+      swatch.className = 'swatch'
+      swatch.style.backgroundColor = line.color
+      chartLegendLabel = document.createElement('div')
+      chartLegendLabel.className = 'chartLegendLabel'
+      chartLegendLabel.innerHTML = line.name + ': '
+
+      legendValue = document.createElement('span')
+      chartLegendValues.push(legendValue)
+
+      chartLegendBlock.appendChild swatch
+      chartLegendBlock.appendChild chartLegendLabel
+      chartLegendBlock.appendChild legendValue
+      chartLegend.appendChild chartLegendBlock
+
+      setOnclick(chartLegendBlock, line)
+
+    graph.render()
+
     Hover = Rickshaw.Class.create(Rickshaw.Graph.HoverDetail,
       render: (args) ->
-        chartLegend.innerHTML = args.formattedXValue
-        args.detail.sort((a, b) ->
+        chartLegendDate.innerHTML = args.formattedXValue
+
+        sorted = args.detail.sort((a, b) ->
           a.order - b.order
-        ).forEach ((d) ->
-          chartLegendBlock = document.createElement('div')
-          chartLegendBlock.className = 'chartLegendBlock'
-          swatch = document.createElement('div')
-          swatch.className = 'swatch'
-          swatch.style.backgroundColor = d.series.color
-          chartLegendLabel = document.createElement('div')
-          chartLegendLabel.className = 'chartLegendLabel'
-          chartLegendLabel.innerHTML = d.name + ': ' + d.formattedYValue
-          chartLegendBlock.appendChild swatch
-          chartLegendBlock.appendChild chartLegendLabel
-          chartLegend.appendChild chartLegendBlock
+        )
+
+        for d, idx in sorted
+          chartLegendValues[idx].innerHTML = ' ' + d.formattedYValue
+          # display horizontal dots
           dot = document.createElement('div')
           dot.className = 'dot'
           dot.style.top = graph.y(d.value.y0 + d.value.y) + 'px'
@@ -56,7 +87,6 @@ angular.module('azzertApp').service 'questionChartService', () ->
           @element.appendChild dot
           dot.className = 'dot active'
           @show()
-        ), this
     )
     hover = new Hover(graph: graph)
 
@@ -73,6 +103,17 @@ angular.module('azzertApp').service 'questionChartService', () ->
     setInterval(() ->
       graph.update()
     , 1000)
-    self.graph = graph
+
+    addToggleBehavior = ->
+      graph.series.forEach (s) ->
+        s.disable = ->
+          throw ("only one series left")  if graph.series.length <= 1
+          s.disabled = true
+          graph.update()
+        s.enable = ->
+          s.disabled = false
+          graph.update()
+
+    addToggleBehavior()
 
   self.create = create
