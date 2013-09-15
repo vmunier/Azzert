@@ -161,7 +161,20 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
 
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
-    console.log("past date : ", chartTime.value())
+    unregisterToAnswerEventSource()
+    clearPoints()
+    console.log("seriesData : ", seriesData)
+    console.log("chartTime.value() : ", chartTime.value())
+    loadHistory(chartTime.value(), '1s').success( (answerHistoryList) ->
+      createChart(answerHistoryList)
+    ).error( (reason) ->
+      console.log "reason : ", reason
+    )
+
 
   $scope.chartTimeOptions = chartTimeService.chartTimeOptions
   $scope.selectedChartTime = $scope.chartTimeOptions[0]
+
+  clearPoints = () ->
+    for i in [0..seriesData.length]
+      seriesData[i] = []
