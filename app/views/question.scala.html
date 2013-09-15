@@ -13,9 +13,10 @@
       <div ng-animate="{move:'animated fadeInLeftBig'}" ng-repeat="answer in answers | orderBy:'-voteCount'">
         <h2>{{answer.name}}</h2>
         <div>
-          <button ng-click="vote(answer._id, -1)" ng-disabled="answer.previousVote != 0 || answer.voteCount <= 0" ng-class="getMinusClassBtn(answer)" type="button"><strong>-1</strong></button>
+          <button ng-click="vote(answer, -1)" ng-disabled="answer.voteCount <= 0" ng-class="getMinusClassBtn(answer.previousVote)" type="button" title="{{voteTooltip(answer.previousVote)}}" rel="tooltip"><strong>-1</strong></button>
           <span class="votePercentage">{{answer.voteCount}} votes ({{votePercentage(answer.voteCount)}}%)</span>
-          <button ng-click="vote(answer._id, +1)" ng-disabled="answer.previousVote != 0" ng-class="getPlusClassBtn(answer)" type="button"><strong>+1</strong></button>
+          <!-- don't use ng-disabled for a voted answer because we would not be alble to show the tooltip-->
+          <button class="other-test" ng-click="vote(answer, +1)" ng-class="getPlusClassBtn(answer.previousVote)" type="button" title="{{voteTooltip(answer.previousVote)}}" rel="tooltip"><strong>+1</strong></button>
         </div>
         <div class="progress progress-striped active">
           <div class="bar" style="width: {{votePercentage(answer.voteCount)}}%; background-color:{{answer.color}};"></div>

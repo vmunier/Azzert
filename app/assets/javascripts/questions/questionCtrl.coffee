@@ -43,15 +43,25 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       seriesData.push([])
 
   setAnswerAlreadyVoted = (answer) ->
-    answer.previousVote = 0
+    answer.previousVote = undefined
     voteByIpResource.get {'questionId': $scope.questionId, 'answerId': answer._id}, (vote) ->
-      answer.previousVote = vote.value
+      answer.previousVote = vote
 
-  $scope.getMinusClassBtn = (answer) ->
-    if answer.previousVote == -1 then "votedMinusBtn" else "minusBtn"
+  $scope.getMinusClassBtn = (previousVote) ->
+    if previousVote?.value == -1 then "disabled votedMinusBtn"
+    else if previousVote?.value == 1 then "disabled minusBtn"
+    else "minusBtn"
 
-  $scope.getPlusClassBtn = (answer) ->
-    if answer.previousVote == 1 then "votedPlusBtn" else "plusBtn"
+  $scope.getPlusClassBtn = (previousVote) ->
+    if previousVote?.value == 1 then "disabled votedPlusBtn"
+    else if previousVote?.value == -1 then "disabled plusBtn"
+    else "plusBtn"
+
+  $scope.voteTooltip = (previousVote) ->
+    if previousVote?
+      pv = if previousVote.value == 1 then "+1" else "-1"
+      "You already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
+    else ""
 
   loadHistory = (start, interval) ->
     $http(
@@ -61,6 +71,11 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         startTimestamp: start.getTime().toString()
         interval: interval
     )
+
+  # Use a timeout to wait the Dom to be complete
+  setTimeout(
+    () -> $('[rel=tooltip]').tooltip()
+  , 500)
 
   $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
     initGlobals($scope.answers)
@@ -122,12 +137,14 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
           y: lastSeriePoint.y
         serie.push(point)
 
-  $scope.vote = (answerId, val) ->
+  $scope.vote = (answer, val) ->
+    answerId = answer._id
     saveSuccess = () ->
       getAnswer(answerId).voteCount += val
     saveFailure = (reason) ->
       console.log("reason : ", reason)
-    voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}, saveSuccess, saveFailure
+    if answer.previousVote == undefined
+      voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}, saveSuccess, saveFailure
 
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
