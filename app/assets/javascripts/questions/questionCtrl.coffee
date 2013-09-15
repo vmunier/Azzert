@@ -42,6 +42,20 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       addAnswerMapping(answerId, i)
       seriesData.push([])
 
+  setTimeout () ->
+    str = "["
+    for serie in seriesData
+      str += "["
+      for elt in serie
+        str += "{x: #{elt.x}, y: #{elt.y}},"
+      str = str.substring(0, str.length - 1)
+      str += "],"
+    str = str.substring(0, str.length - 1)
+    str += "];"
+    console.log("export series to be used in Rickshaw : ")
+    console.log(str)
+  , 1500
+
   setAnswerAlreadyVoted = (answer) ->
     answer.previousVote = undefined
     voteByIpResource.get {'questionId': $scope.questionId, 'answerId': answer._id}, (vote) ->
@@ -119,7 +133,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     point =
       x:date
       y:answerHistory.voteCount
-
     last = serie[serie.length - 1]
     # remove the last element if it has the same date to replace it
     if last != undefined and last.x == answerHistory.date
