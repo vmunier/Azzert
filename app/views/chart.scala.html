@@ -4,7 +4,7 @@
   <div class="chartLegend">
     <span>{{chartLegendDate}}</span>
     <div ng-repeat="line in series" ng-click="toggleLegend(line)" class="chartLegendBlock">
-      <div class="swatch" style="background-color: {{line.color}}"></div>
+      <div class="legendCircle" style="{{line.legendStyle}}"></div>
       <div class="chartLegendLabel">{{line.name}} : {{line.legendValue}}</div>
     </div>
   </div>

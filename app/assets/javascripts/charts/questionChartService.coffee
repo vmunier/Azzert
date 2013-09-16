@@ -68,17 +68,38 @@ angular.module('azzertApp').service 'questionChartService', () ->
       graph.update()
     , 1000)
 
+
+    getNbEnabledLines = ->
+      total = 0
+      for l in series
+        total += 1 if not l.disabled
+      total
+
+    enableAllLines = ->
+      for s in series
+        s.enable()
+
     addToggleBehavior = ->
       graph.series.forEach (s) ->
+        appendBorderColor = ->
+          s.legendStyle += '; border-color: ' + s.color
+
         s.disable = ->
-          throw ("only one series left")  if graph.series.length <= 1
-          s.disabled = true
-          graph.update()
+          if getNbEnabledLines() <= 1
+            enableAllLines()
+          else
+            s.disabled = true
+            s.legendStyle = 'background-color: white'
+            appendBorderColor()
+            graph.update()
         s.enable = ->
           s.disabled = false
+          s.legendStyle = 'background-color: ' + s.color
+          appendBorderColor()
           graph.update()
 
     addToggleBehavior()
+    enableAllLines()
 
   self.toggleLegend = (line) ->
     if line.disabled
