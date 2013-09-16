@@ -105,11 +105,19 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     voteCount: voteCount
     date: date
 
+  # scope chart variables
+  $scope.series = []
+  $scope.toggleLegend = questionChartService.toggleLegend
+  $scope.chartLegendDate = ""
+  setChartLegendDate = (date) ->
+    $scope.$apply () ->
+      $scope.chartLegendDate = "" + date
+
   createChart = (answerHistoryList) ->
     names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
-    questionChartService.create($scope.answers, seriesData)
+    questionChartService.create($scope.answers, $scope.series, setChartLegendDate, seriesData)
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
