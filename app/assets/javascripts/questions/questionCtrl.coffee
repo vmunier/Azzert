@@ -74,7 +74,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.voteTooltip = (previousVote) ->
     if previousVote?
       pv = if previousVote.value == 1 then "+1" else "-1"
-      "You already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
+      "You have already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
     else ""
 
   loadHistory = (start, interval) ->
