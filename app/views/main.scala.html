@@ -4,7 +4,7 @@
 
 <html ng-app="azzertApp" ng-controller="MainCtrl">
   <head>
-    <title>{{pageTitle}}</title>
+    <title ng-bind-template="Azzert : {{pageTitle}}">Azzert : All Questions</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/jquery-ui/themes/base/jquery-ui.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/animate.css/animate.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("components/angular-ui/build/angular-ui.css")">
