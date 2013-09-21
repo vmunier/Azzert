@@ -1,0 +1,51 @@
+{
+  "settings":{
+    "index": {
+      "analysis":{
+        "filter": {
+          "customNgram":{
+            "type":"edgeNGram",
+            "min_gram":2,
+            "max_gram":14
+          }
+        },
+        "analyzer":{
+          "index_autocomplete":{
+            "type":"custom",
+            "tokenizer":"standard",
+            "filter":[ "standard", "lowercase", "stop", "customNgram" ]
+          },
+          "search_autocomplete" : {
+            "type" : "custom",
+            "tokenizer" : "standard",
+            "filter" : [ "standard", "lowercase", "stop"]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "questions": {
+      "properties": {
+        "question": {
+          "type": "multi_field",
+          "fields": {
+            "autocomplete": {"type": "string", "index_analyzer": "index_autocomplete", "search_analyzer": "search_autocomplete"},
+            "original": {"type": "string", "analyzer": "simple"}
+          }
+        },
+        "questionId": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "answers": {
+          "type": "multi_field",
+          "fields": {
+            "autocomplete": {"type": "string", "index_analyzer": "index_autocomplete", "search_analyzer": "search_autocomplete"},
+            "original": {"type": "string", "analyzer": "simple"}
+          }
+        }
+      }
+    }
+  }
+}

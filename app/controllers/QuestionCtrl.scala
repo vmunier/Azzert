@@ -14,6 +14,7 @@ import scala.concurrent.Await
 import akka.util.Timeout
 import scala.concurrent.duration.DurationInt
 import jobs.HistoryActor
+import models.Autocomplete
 
 case class QuestionMapping(name: String, answers: Seq[String])
 
@@ -53,6 +54,7 @@ object QuestionCtrl extends Controller {
           HistoryActor.signalVoteChanged(answer._id.stringify)
         }
 
+        Autocomplete.save(question, answers)
         Ok(question._id.stringify)
       })
   }
