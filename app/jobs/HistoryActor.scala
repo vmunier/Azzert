@@ -2,8 +2,6 @@ package jobs
 
 import global.Global
 import scala.concurrent.ExecutionContext.Implicits.global
-import redis.clients.jedis.Jedis
-import redis.clients.jedis.JedisPool
 import play.api.Logger
 import play.api.libs.concurrent.Akka
 import scala.concurrent.duration.DurationInt
@@ -17,7 +15,6 @@ import play.api.libs.json.Json
 import utils.JsonFormats._
 import org.joda.time.DateTime
 import HistoryActor._
-import models.RedisKeys._
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Enumerator
 import collection.mutable

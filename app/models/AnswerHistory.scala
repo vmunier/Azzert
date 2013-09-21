@@ -11,14 +11,11 @@ import utils.Mongo._
 import utils.JsonFormats.answerHistoryFormat
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.iteratee.Concurrent.Channel
-import redis.clients.jedis.JedisPubSub
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType
 import akka.dataflow._
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.iteratee.Concurrent
-import RedisKeys._
-import utils.Redis
 import utils.EnumeratorUtil
 import play.api.libs.iteratee.Enumeratee
 import jobs.HistoryActor
