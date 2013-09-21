@@ -16,9 +16,11 @@
       <button ng-click="saveQuestion()" ng-disabled="invalidQuestionForm()" class="btn btn-success" data-disable-with="Creating…" name="button" type="submit">Create</button>
     </form>
 
+    <input ng-model="prefix" ng-change="autocomplete(prefix)" type="text">
+
     Available questions :
-    <div ng-repeat="q in questions">
-      <a href="/questions/{{q._id}}">{{q.name}}</a>
+    <div ng-repeat="question in questions">
+      <a href="/questions/{{question._id}}">{{question.name}}</a>
     </div>
   </div>
 </div>

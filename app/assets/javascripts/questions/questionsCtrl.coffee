@@ -1,4 +1,4 @@
-angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titleService, questionResource) ->
+angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titleService, questionResource, debounce, autocompleteResource) ->
 
   $scope.MaxAnswers = 10
   $scope.questionName = ""
@@ -35,3 +35,24 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
 
   $scope.invalidQuestionForm = () ->
     excludeEmptyAnswers().length == 0 or $scope.questionName == ""
+
+  searchAutocomplete = (keyword) ->
+    autocompleteResource.search keyword:keyword, (response) ->
+      $scope.questions.length = 0
+      for obj in response.hits.hits
+        src = obj._source
+        $scope.questions.push
+          _id: src.questionId
+          name: src.question
+
+  debounceAutocomplete = debounce(1600)
+
+  $scope.autocomplete = (keyword) ->
+    if keyword.length >= 2
+      # the timeout is 400 ms once the keyword is longer than 5 chars
+      timeout = Math.max(2400 - (keyword.length * 400), 400)
+
+      debounceAutocomplete.exec( () ->
+        response = searchAutocomplete(keyword)
+        response
+      , timeout)
