@@ -22,6 +22,8 @@ GET    /api/questions/:questionId/answers/:answerId/voteByIp      controllers.Vo
 GET    /api/answerHistory/questions/:questionId                   controllers.AnswerHistoryCtrl.history(questionId, startTimestamp:Long, interval)
 GET    /api/answerHistory/questions/:questionId/sse               controllers.AnswerHistoryCtrl.sseQuestionSession(questionId)
 
+GET    /api/autocomplete/:keyword                                 controllers.AutocompleteCtrl.autocomplete(keyword)
+
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file                                              controllers.Assets.at(path="/public", file)
 
