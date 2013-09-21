@@ -47,7 +47,7 @@ object Autocomplete {
       // the pipe has no meaning, it is just here to visually separate each answers
       "answers" -> answers.map(_.name).mkString(" | "))
 
-      elasticsearchRequest("/autocomplete/questions/$questionId", _.post(body))
+      elasticsearchRequest(s"/autocomplete/questions/$questionId", _.post(body))
   }
 
   def initialize(): Future[Response] = {
