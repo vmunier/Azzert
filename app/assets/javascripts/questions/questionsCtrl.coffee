@@ -57,7 +57,7 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
     $scope.autocomplete(keyword, timeout)
 
   $scope.autocomplete = (keyword, timeout) ->
-    if keyword < 2
+    if keyword.length < 2
       angular.copy(defaultQuestions, $scope.questions)
     else
       debounceAutocomplete.exec( () ->
