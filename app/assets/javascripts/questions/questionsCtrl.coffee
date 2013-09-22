@@ -49,11 +49,11 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
           name: src.question
       angular.copy(questions, $scope.questions)
 
-  debounceAutocomplete = debounce(1600)
+  debounceAutocomplete = debounce(1200)
 
   $scope.debouncedAutocomplete = (keyword) ->
-    # the timeout is 400 ms once the keyword is longer than 5 chars
-    timeout = Math.max(2400 - (keyword.length * 400), 400)
+    # the timeout is 400 ms once the keyword is longer than 4 chars
+    timeout = Math.max(2000 - (keyword.length * 400), 400)
     $scope.autocomplete(keyword, timeout)
 
   $scope.autocomplete = (keyword, timeout) ->
