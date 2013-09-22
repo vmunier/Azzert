@@ -47,11 +47,13 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
 
   debounceAutocomplete = debounce(1600)
 
-  $scope.autocomplete = (keyword) ->
-    if keyword.length >= 2
-      # the timeout is 400 ms once the keyword is longer than 5 chars
-      timeout = Math.max(2400 - (keyword.length * 400), 400)
+  $scope.debouncedAutocomplete = (keyword) ->
+    # the timeout is 400 ms once the keyword is longer than 5 chars
+    timeout = Math.max(2400 - (keyword.length * 400), 400)
+    $scope.autocomplete(keyword, timeout)
 
+  $scope.autocomplete = (keyword, timeout) ->
+    if keyword.length >= 2
       debounceAutocomplete.exec( () ->
         response = searchAutocomplete(keyword)
         response

@@ -16,9 +16,15 @@
       <button ng-click="saveQuestion()" ng-disabled="invalidQuestionForm()" class="btn btn-success" data-disable-with="Creating…" name="button" type="submit">Create</button>
     </form>
 
-    <input ng-model="prefix" ng-change="autocomplete(prefix)" type="text">
-
-    Available questions :
+    <form class="form-search">
+      <div class="input-append">
+        <input ng-model="keyword" ng-change="debouncedAutocomplete(keyword)" type="text" class="span7 search-query" placeholder="Search a question...">
+        <button ng-click="autocomplete(keyword, 0)" type="submit" class="btn btn-primary">
+          <i class="icon-search icon-white"></i>
+        </button>
+      </div>
+    </form>
+    Questions found :
     <div ng-repeat="question in questions">
       <a href="/questions/{{question._id}}">{{question.name}}</a>
     </div>
