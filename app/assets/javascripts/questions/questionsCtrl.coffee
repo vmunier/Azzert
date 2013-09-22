@@ -5,8 +5,11 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
 
   titleService.set("All Questions")
 
-  $scope.questions = questionResource.query {}, () ->
-    console.log("$scope.questions : ", $scope.questions)
+  $scope.questions = []
+
+  defaultQuestions = questionResource.query {}, () ->
+    angular.copy(defaultQuestions, $scope.questions)
+    console.log("default questions : ", defaultQuestions)
 
   emptyAnswer = () ->
     {text:""}
@@ -38,12 +41,13 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
 
   searchAutocomplete = (keyword) ->
     autocompleteResource.search keyword:keyword, (response) ->
-      $scope.questions.length = 0
+      questions = []
       for obj in response.hits.hits
         src = obj._source
-        $scope.questions.push
+        questions.push
           _id: src.questionId
           name: src.question
+      angular.copy(questions, $scope.questions)
 
   debounceAutocomplete = debounce(1600)
 
@@ -53,7 +57,9 @@ angular.module('azzertApp').controller 'QuestionsCtrl', ($scope, $location, titl
     $scope.autocomplete(keyword, timeout)
 
   $scope.autocomplete = (keyword, timeout) ->
-    if keyword.length >= 2
+    if keyword < 2
+      angular.copy(defaultQuestions, $scope.questions)
+    else
       debounceAutocomplete.exec( () ->
         response = searchAutocomplete(keyword)
         response
