@@ -15,10 +15,10 @@ import java.io.File
 
 object Autocomplete {
 
-  val elasticsearchHost = "http://localhost:9200"
+  val elasticsearchUrl = Play.configuration.getString("elasticsearch.url").get
 
   private def elasticsearchRequest(queryString: String, request: WSRequestHolder => Future[Response]) = {
-    request(WS.url(s"$elasticsearchHost/$queryString").withTimeout(10.seconds.toMillis.toInt)).flatMap {
+    request(WS.url(s"$elasticsearchUrl/$queryString").withTimeout(10.seconds.toMillis.toInt)).flatMap {
       case response if response.status == 200 =>
         Future.successful(response)
       case response =>

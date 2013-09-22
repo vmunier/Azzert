@@ -4,6 +4,8 @@ import global.Global
 import org.joda.time.DateTime
 import scala.concurrent.Future
 import reactivemongo.bson.BSONObjectID
+import play.api.Play
+import play.api.Play.current
 import play.api.libs.json.Json
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.modules.reactivemongo.json.BSONFormats.BSONObjectIDFormat
@@ -48,11 +50,15 @@ case class AnswerHistory(questionId:String, answerId: String, voteCount: Int, da
 }
 
 object AnswerHistory {
-  val socket = new Socket("127.0.0.1", 4242)
+  val host = Play.configuration.getString("opentsdb.host").get
+  val port = Play.configuration.getString("opentsdb.port").get.toInt
+  val socket = new Socket(host, port)
   val out = new PrintWriter(socket.getOutputStream(), true)
 
+  val opentsdbUrl = Play.configuration.getString("opentsdb.url").get
+
   private def get(query: String): Future[Seq[AnswerHistory]] = {
-    val url = new URL(s"http://localhost:4242/q?$query")
+    val url = new URL(s"$opentsdbUrl/q?$query")
     val uri = new URI(url.getProtocol, url.getUserInfo, url.getHost, url.getPort, url.getPath, url.getQuery, url.getRef)
     WS.url(uri.toURL.toString).withTimeout(10.seconds.toMillis.toInt).get.flatMap {
       case response if response.status == 200 =>
