@@ -24,7 +24,15 @@
         </button>
       </div>
     </form>
-    Questions found :
+
+    <div ng-switch on="questions.length">
+      <div ng-switch-when="0">
+        Sorry, no matching results
+      </div>
+      <div ng-switch-default>
+        Questions found :
+      </div>
+    </div>
     <div ng-repeat="question in questions">
       <a href="/questions/{{question._id}}">{{question.name}}</a>
     </div>
