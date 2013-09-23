@@ -77,6 +77,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       "You have already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
     else ""
 
+  historyStartDate = new Date(0)
+
   loadHistory = (start, interval) ->
     $http(
       method: 'GET'
@@ -88,12 +90,16 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
 
   $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
     initGlobals($scope.answers)
-    loadHistory(new Date(0), '1s').success( (answerHistoryList) ->
+    loadHistory(historyStartDate, '1s').success( (answerHistoryList) ->
       createChart(answerHistoryList)
       registerToAnswerEventSource()
     ).error( (reason) ->
+      createChart(getDefaultHistoryList())
       console.log "reason : ", reason
     )
+
+  getDefaultHistoryList = () ->
+    $scope.answers.map( (answer) -> {voteCount: answer.voteCount, answerId: answer._id, date: historyStartDate})
 
   createAnswerHistory = (answerId, voteCount, date) ->
     answerId: answerId
