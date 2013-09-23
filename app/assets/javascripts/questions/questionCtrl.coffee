@@ -86,11 +86,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         interval: interval
     )
 
-  # Use a timeout to wait the Dom to be complete
-  setTimeout(
-    () -> $('[rel=tooltip]').tooltip()
-  , 500)
-
   $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
     initGlobals($scope.answers)
     loadHistory(new Date(0), '1s').success( (answerHistoryList) ->
@@ -161,7 +156,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.vote = (answer, val) ->
     answerId = answer._id
     saveSuccess = () ->
-      getAnswer(answerId).voteCount += val
+      setAnswerAlreadyVoted(answer)
+      answer.voteCount += val
     saveFailure = (reason) ->
       console.log("reason : ", reason)
     if answer.previousVote == undefined
