@@ -2,7 +2,8 @@ angular.module('azzertApp').service 'questionChartService', () ->
   self = @
 
   # create the graph and update it automatically every second.
-  create = (answers, series, setChartLegendDate, seriesData) ->
+  create = ($chartContainer, answers, series, setChartLegendDate, seriesData) ->
+    $chartContainer.append($('#chartTemplate').clone().children())
     for answer, i in answers
       series.push(
         name: answer.name
@@ -12,7 +13,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
       )
 
     graph = new Rickshaw.Graph(
-      element: document.querySelector('.chart')
+      element: $chartContainer.find('.chart')[0]
       width: 760
       height: 500
       renderer: 'line'
@@ -28,7 +29,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
       graph: graph
       orientation: 'left'
       tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-      element: document.querySelector('.yAxis')
+      element: $chartContainer.find('.yAxis')[0]
     )
 
     graph.render()
@@ -60,7 +61,7 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
     slider = new Rickshaw.Graph.RangeSlider(
       graph: graph,
-      element: $('.slider')
+      element: $chartContainer.find('.slider')
     )
 
     self.intervalId = setInterval(() ->
@@ -109,6 +110,4 @@ angular.module('azzertApp').service 'questionChartService', () ->
 
   self.clear = () ->
     clearInterval(self.intervalId)
-    $('.yAxis').empty()
-    $('.chart').empty()
-    $('.slider').slider('destroy')
+    $('.chartContainer').empty()
