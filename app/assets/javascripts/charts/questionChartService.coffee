@@ -53,7 +53,6 @@ angular.module('azzertApp').service 'questionChartService', () ->
           @show()
     )
     hover = new Hover(graph: graph)
-
     hoverDetail = new Rickshaw.Graph.HoverDetail(graph: graph)
 
     axes = new Rickshaw.Graph.Axis.Time(graph: graph)
@@ -64,10 +63,9 @@ angular.module('azzertApp').service 'questionChartService', () ->
       element: $('.slider')
     )
 
-    setInterval(() ->
+    self.intervalId = setInterval(() ->
       graph.update()
     , 1000)
-
 
     getNbEnabledLines = ->
       total = 0
@@ -108,3 +106,9 @@ angular.module('azzertApp').service 'questionChartService', () ->
       line.disable()
 
   self.create = create
+
+  self.clear = () ->
+    clearInterval(self.intervalId)
+    $('.yAxis').empty()
+    $('.chart').empty()
+    $('.slider').slider('destroy')

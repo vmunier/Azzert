@@ -173,7 +173,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.setChartTime = (chartTime) ->
     $scope.selectedChartTime = chartTime
     unregisterToAnswerEventSource()
-    clearPoints()
+    clearChart()
     console.log("seriesData : ", seriesData)
     console.log("chartTime.value() : ", chartTime.value())
     loadHistory(chartTime.value(), '1s').success( (answerHistoryList) ->
@@ -186,6 +186,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.chartTimeOptions = chartTimeService.chartTimeOptions
   $scope.selectedChartTime = $scope.chartTimeOptions[0]
 
-  clearPoints = () ->
-    for i in [0..seriesData.length]
-      seriesData[i] = []
+  clearChart = () ->
+    $scope.$apply( () ->
+      angular.copy([], $scope.series)
+    )
+    questionChartService.clear()
