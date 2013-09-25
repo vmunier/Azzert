@@ -77,7 +77,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       "You have already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
     else ""
 
-  historyStartDate = new Date(0)
+  historyStartDate = new Date()
+  historyStartDate.setDate(historyStartDate.getDate() - 1)
 
   loadHistory = (start, interval) ->
     $http(
