@@ -2,7 +2,7 @@ angular.module('azzertApp').factory 'QuestionChart', () ->
   # methods : clear
   class QuestionChart
     # create the graph and update it automatically every second.
-    constructor: ($chartContainer, answers, series, setChartLegendDate, seriesData) ->
+    constructor: ($chartContainer, answers, series, setChartLegendDate, seriesData, hasSlider = true) ->
       $chartContainer.append($('#chartTemplate').clone().children())
       for answer, i in answers
         series.push(
@@ -59,10 +59,11 @@ angular.module('azzertApp').factory 'QuestionChart', () ->
       axes = new Rickshaw.Graph.Axis.Time(graph: graph)
       axes.render()
 
-      slider = new Rickshaw.Graph.RangeSlider(
-        graph: graph,
-        element: $chartContainer.find('.slider')
-      )
+      if hasSlider
+        new Rickshaw.Graph.RangeSlider(
+          graph: graph,
+          element: $chartContainer.find('.slider')
+        )
 
       self.intervalId = setInterval(() ->
         graph.update()

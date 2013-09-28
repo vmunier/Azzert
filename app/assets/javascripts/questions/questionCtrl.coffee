@@ -139,7 +139,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
 
-    questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
+    questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData, false)
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
