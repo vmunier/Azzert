@@ -41,9 +41,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       answerId = answer._id
       setAnswerAlreadyVoted(answer)
       addAnswerMapping(answerId, i)
-      seriesData.push([])
 
-  setTimeout () ->
+  logSeries = () ->
     str = "["
     for serie in seriesData
       str += "["
@@ -55,7 +54,8 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     str += "];"
     console.log("export series to be used in Rickshaw : ")
     console.log(str)
-  , 1500
+
+  setTimeout logSeries, 1500
 
   setAnswerAlreadyVoted = (answer) ->
     answer.previousVote = undefined
@@ -79,7 +79,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     else ""
 
   historyStartDate = new Date()
-  historyStartDate.setDate(historyStartDate.getDate() - 1)
+  historyStartDate.setDate(historyStartDate.getDate() - 100)
 
   loadHistory = (start, interval) ->
     $http(
@@ -121,8 +121,12 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   self.questionChart = undefined
 
   createChart = (answerHistoryList) ->
+    #  set seriesData before adding points
+    for a in $scope.answers
+      seriesData.push([])
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
+
     self.questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
 
   answerHistoryListener = (e) ->
@@ -191,6 +195,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.selectedChartTime = $scope.chartTimeOptions[0]
 
   clearChart = () ->
+    seriesData = []
     $scope.chartLegendDate = ""
     $scope.$apply( () ->
       angular.copy([], $scope.series)
