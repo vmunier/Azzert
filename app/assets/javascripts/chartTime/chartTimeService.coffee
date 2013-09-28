@@ -16,6 +16,10 @@ angular.module('azzertApp').service 'chartTimeService', () ->
   pastYear = () ->
     updateDate( (d) -> d.setFullYear(d.getFullYear() - 1) )
 
+  anyTime = () ->
+    # new Date(0) does not work when requesting opentsdb so we set few years back
+    updateDate( (d) -> d.setFullYear(d.getFullYear() - 5) )
+
   # returns the date after updating it
   updateDate = (update) ->
     d = new Date()
@@ -24,7 +28,7 @@ angular.module('azzertApp').service 'chartTimeService', () ->
 
   self.chartTimeOptions = [
     label:"Any Time"
-    value: 2
+    value: anyTime
   ,
     label:"Past hour"
     value: pastHour
