@@ -121,7 +121,6 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   self.questionChart = undefined
 
   createChart = (answerHistoryList) ->
-    names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
     self.questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
