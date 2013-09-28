@@ -192,6 +192,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   $scope.selectedChartTime = $scope.chartTimeOptions[0]
 
   clearChart = () ->
+    $scope.chartLegendDate = ""
     $scope.$apply( () ->
       angular.copy([], $scope.series)
     )
