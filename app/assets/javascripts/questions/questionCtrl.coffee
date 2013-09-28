@@ -78,8 +78,17 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       "You have already voted #{pv} for this answer in #{new Date(previousVote.date).toString('yyyy-MM-dd HH:mm')}"
     else ""
 
-  historyStartDate = new Date()
-  historyStartDate.setDate(historyStartDate.getDate() - 100)
+
+  $scope.chartTimeOptions = chartTimeService.chartTimeOptions
+  $scope.selectedChartTime = $scope.chartTimeOptions[0]
+  historyStartDate = $scope.selectedChartTime.value()
+
+  $scope.setChartTime = (chartTime) ->
+    clearChart()
+    $scope.selectedChartTime = chartTime
+    historyStartDate = chartTime.value()
+    unregisterToAnswerEventSource()
+    loadChartWithHistory()
 
   loadHistory = (start, interval) ->
     $http(
@@ -90,8 +99,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
         interval: interval
     )
 
-  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
-    initGlobals($scope.answers)
+  loadChartWithHistory = () ->
     loadHistory(historyStartDate, '1s').success( (answerHistoryList) ->
       createChart(answerHistoryList)
       registerToAnswerEventSource()
@@ -99,6 +107,10 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
       createChart(getDefaultHistoryList())
       console.log "reason : ", reason
     )
+
+  $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
+    initGlobals($scope.answers)
+    loadChartWithHistory()
 
   getDefaultHistoryList = () ->
     $scope.answers.map( (answer) -> {voteCount: answer.voteCount, answerId: answer._id, date: historyStartDate})
@@ -118,7 +130,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     $scope.$apply () ->
       $scope.chartLegendDate = "" + date
 
-  self.questionChart = undefined
+  questionChart = undefined
 
   createChart = (answerHistoryList) ->
     #  set seriesData before adding points
@@ -127,7 +139,7 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
 
-    self.questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
+    questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
@@ -178,26 +190,13 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     if answer.previousVote == undefined
       voteResource.save {'questionId': $scope.questionId, 'answerId': answerId, 'vote': val}, saveSuccess, saveFailure
 
-  $scope.setChartTime = (chartTime) ->
-    $scope.selectedChartTime = chartTime
-    unregisterToAnswerEventSource()
-    clearChart()
-    console.log("seriesData : ", seriesData)
-    console.log("chartTime.value() : ", chartTime.value())
-    loadHistory(chartTime.value(), '1s').success( (answerHistoryList) ->
-      createChart(answerHistoryList)
-    ).error( (reason) ->
-      console.log "reason : ", reason
-    )
-
-
-  $scope.chartTimeOptions = chartTimeService.chartTimeOptions
-  $scope.selectedChartTime = $scope.chartTimeOptions[0]
+  safeApply = (action) ->
+    # checks $digest is already in progress
+    if $scope.$$phase then action() else $scope.$apply(action)
 
   clearChart = () ->
     seriesData = []
     $scope.chartLegendDate = ""
-    $scope.$apply( () ->
-      angular.copy([], $scope.series)
-    )
-    self.questionChart.clear()
+    angular.copy([], $scope.series)
+    safeApply () -> angular.copy([], $scope.series)
+    questionChart.clear()
