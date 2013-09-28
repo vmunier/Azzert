@@ -1,4 +1,5 @@
-angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, voteByIpResource, questionChartService, chartTimeService) ->
+angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $http, titleService, questionResource, answerResource, answerHistoryService, voteResource, voteByIpResource, QuestionChart, chartTimeService) ->
+  self = @
 
   $scope.answers = []
   $scope.questionId = $routeParams.id
@@ -109,18 +110,21 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
 
   # scope chart variables
   $scope.series = []
-  $scope.toggleLegend = questionChartService.toggleLegend
+  $scope.toggleLegend = (line) ->
+    if line.disabled then line.enable() else line.disable()
+
   $scope.chartLegendDate = ""
   setChartLegendDate = (date) ->
     $scope.$apply () ->
       $scope.chartLegendDate = "" + date
 
+  self.questionChart = undefined
+
   createChart = (answerHistoryList) ->
     names = $scope.answers.map( (answer) -> answer.name)
     for answerHistory, i in answerHistoryList
       addPoint(answerHistory)
-
-    questionChartService.create($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
+    self.questionChart = new QuestionChart($('.chartContainer'), $scope.answers, $scope.series, setChartLegendDate, seriesData)
 
   answerHistoryListener = (e) ->
     answerHistory = JSON.parse(e.data)
@@ -191,4 +195,4 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
     $scope.$apply( () ->
       angular.copy([], $scope.series)
     )
-    questionChartService.clear()
+    self.questionChart.clear()
