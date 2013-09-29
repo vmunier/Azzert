@@ -1,3 +1,5 @@
+todo.txt
+FAQ.txt
 logs
 project/project
 project/target
@@ -28,3 +30,6 @@ public/components/*
 .cache
 .target
 bin/
+
+# npm
+node_modules/
