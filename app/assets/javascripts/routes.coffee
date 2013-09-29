@@ -1,5 +1,5 @@
 
-angular.module('azzertApp', ['ui', 'ui.bootstrap', 'ngCookies', 'ngResource'])
+angular.module('azzertApp', ['ui', 'ui.bootstrap', 'ngRoute', 'ngCookies', 'ngResource'])
   .config ($routeProvider) ->
     $routeProvider
       .when '/',
