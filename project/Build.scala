@@ -10,8 +10,8 @@ object ApplicationBuild extends Build {
   val appDependencies = Seq(
     // Add your project dependencies here,
     "com.typesafe.akka" %% "akka-dataflow" % "2.1.2",
-    "org.reactivemongo" %% "reactivemongo" % "0.9",
-    "org.reactivemongo" %% "play2-reactivemongo" % "0.9"
+    "org.reactivemongo" %% "reactivemongo" % "0.10.0-SNAPSHOT",
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0-SNAPSHOT"
   )
 
 
