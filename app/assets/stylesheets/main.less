@@ -4,8 +4,6 @@
 @iconSpritePath:          "/assets/images/glyphicons-halflings.png";
 @iconWhiteSpritePath:     "/assets/images/glyphicons-halflings-white.png";
 
-
-@footerHeight: 20px;
 @headerHeight: 5px;
 
 html {
@@ -13,37 +11,28 @@ html {
 }
 
 body {
-    height: 100%;
+    position: relative;
+    min-height: 100%;
     background: white;
 
     > header {
         background: grey;
-        clear: both;
-        position: relative;
         height: @headerHeight;
-        margin-bottom: -@headerHeight;
     }
 
     > .container {
-        height: auto;
-        min-height: 100%;
-
-        > div {
-            padding-top: (@headerHeight + 10);
-            padding-bottom: (@footerHeight + 10);
-        }
+        // set enough padding-bottom to have no space under the footer in firefox
+        padding-bottom: 50px;
     }
 
     > footer {
         background: #343434;
         color: #fff;
         text-align: center;
-
-        // tuto to have a footer which sticks the bottom of the page : http://www.lwis.net/journal/2008/02/08/pure-css-sticky-footer/
-        clear: both;
-        position: relative;
-        height: @footerHeight;
-        margin-top: -@footerHeight;
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
     }
 }
 
