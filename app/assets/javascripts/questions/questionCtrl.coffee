@@ -84,10 +84,10 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   historyStartDate = $scope.selectedChartTime.value()
 
   $scope.setChartTime = (chartTime) ->
+    unregisterToAnswerEventSource()
     clearChart()
     $scope.selectedChartTime = chartTime
     historyStartDate = chartTime.value()
-    unregisterToAnswerEventSource()
     loadChartWithHistory()
 
   loadHistory = (start, interval) ->
@@ -102,11 +102,20 @@ angular.module('azzertApp').controller 'QuestionCtrl', ($scope, $routeParams, $h
   loadChartWithHistory = () ->
     loadHistory(historyStartDate, '1s').success( (answerHistoryList) ->
       createChart(answerHistoryList)
-      registerToAnswerEventSource()
+      # register only if the first history point is one month old at most
+      if answerHistoryList.length > 0 and monthDiff(new Date(answerHistoryList[0].date), new Date()) == 0
+        registerToAnswerEventSource()
     ).error( (reason) ->
       createChart(getDefaultHistoryList())
+      registerToAnswerEventSource()
       console.log "reason : ", reason
     )
+
+  monthDiff = (d1, d2) ->
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth() + 1;
+    months += d2.getMonth();
+    if months <= 0 then 0 else months
 
   $scope.answers = answerResource.query {'questionId': $scope.questionId}, () ->
     initGlobals($scope.answers)
