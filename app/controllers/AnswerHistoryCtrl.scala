@@ -25,8 +25,6 @@ object AnswerHistoryCtrl extends Controller {
     Async {
       flow {
         val answers = Answer.findByQuestionId(questionId)()
-        val start = new DateTime().minusDays(20)
-
         val enumeratorsFuture = Future.sequence(answers.map { answer => HistoryActor.getLiveEnumerator(answer._id.stringify) })
         val enumerators = enumeratorsFuture()
         val combinedEnums = Enumerator.interleave(enumerators)
