@@ -22,13 +22,11 @@ object QuestionsCtrl extends Controller {
     Ok(views.html.questions())
   }
 
-  def questions = Action {
-    Async {
+  def questions = Action.async {
       flow {
         val questions = Question.findAll()()
         Ok(JsArray(questions.map(_.toJson)))
       }
-    }
   }
 
   def tsdbOutputToJson(output: String) = {

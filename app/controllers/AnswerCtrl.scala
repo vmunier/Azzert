@@ -13,25 +13,21 @@ import reactivemongo.bson.BSONObjectID
 import jobs.HistoryActor
 
 object AnswerCtrl extends Controller {
-  def answers(questionId: String) = Action {
-    Async {
+  def answers(questionId: String) = Action.async {
       flow {
         val answers = Answer.findByQuestionId(questionId)()
         val json = JsArray(answers.map(_.toJson))
         Ok(json)
       }
-    }
   }
 
-  def answer(questionId: String, answerId: String) = Action {
-    Async {
-      flow {
-        val maybeAnswer = Answer.find(answerId)()
+  def answer(questionId: String, answerId: String) = Action.async {
+    flow {
+      val maybeAnswer = Answer.find(answerId)()
 
-        maybeAnswer.map { answer =>
-          Ok(answer.toJson)
-        }.getOrElse(NotFound(s"answer with id $answerId does not exist"))
-      }
+      maybeAnswer.map { answer =>
+        Ok(answer.toJson)
+      }.getOrElse(NotFound(s"answer with id $answerId does not exist"))
     }
   }
 }

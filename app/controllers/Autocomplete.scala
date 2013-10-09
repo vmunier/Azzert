@@ -8,13 +8,11 @@ import models.Autocomplete
 
 object AutocompleteCtrl extends Controller {
 
-  def autocomplete(keyword: String) = Action {
-    Async {
-      Autocomplete.search(keyword).map { result =>
-        Ok(result.json).as("application/json")
-      } recover {
-        case t => BadRequest(t.getMessage)
-      }
+  def autocomplete(keyword: String) = Action.async {
+    Autocomplete.search(keyword).map { result =>
+      Ok(result.json).as("application/json")
+    } recover {
+      case t => BadRequest(t.getMessage)
     }
   }
 }

@@ -30,15 +30,13 @@ object QuestionCtrl extends Controller {
       "answers" -> seq(nonEmptyText).verifying("A question should have at least 1 answer and at most 10 answers", answers => 1 <= answers.size && answers.size <= 10)
     )(QuestionMapping.apply)(QuestionMapping.unapply))
 
-  def question(id: String) = Action {
-    Async {
-      flow {
-        val maybeQuestion = Question.find(id)()
+  def question(id: String) = Action.async {
+    flow {
+      val maybeQuestion = Question.find(id)()
 
-        maybeQuestion.map { question =>
-          Ok(question.toJson)
-        }.getOrElse(NotFound(s"question with id $id does not exist"))
-      }
+      maybeQuestion.map { question =>
+        Ok(question.toJson)
+      }.getOrElse(NotFound(s"question with id $id does not exist"))
     }
   }
 

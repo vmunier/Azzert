@@ -60,7 +60,7 @@ object AnswerHistory {
   private def get(query: String): Future[Seq[AnswerHistory]] = {
     val url = new URL(s"$opentsdbUrl/q?$query")
     val uri = new URI(url.getProtocol, url.getUserInfo, url.getHost, url.getPort, url.getPath, url.getQuery, url.getRef)
-    WS.url(uri.toURL.toString).withTimeout(10.seconds.toMillis.toInt).get.flatMap {
+    WS.url(uri.toURL.toString).withRequestTimeout(10.seconds.toMillis.toInt).get.flatMap {
       case response if response.status == 200 =>
         Future(response.body.split("\n").map(transformTsdbOutput(_)))
       case _ =>
