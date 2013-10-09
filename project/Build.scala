@@ -14,8 +14,8 @@ object ApplicationBuild extends Build {
     "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0-SNAPSHOT"
   )
 
-
   val main = play.Project(appName, appVersion, appDependencies).settings(
+    resolvers += "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     autoCompilerPlugins := true,
     libraryDependencies <+= scalaVersion { v =>
       compilerPlugin("org.scala-lang.plugins" % "continuations" % v) },
