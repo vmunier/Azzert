@@ -20,6 +20,6 @@ object ApplicationBuild extends Build {
     libraryDependencies <+= scalaVersion { v =>
       compilerPlugin("org.scala-lang.plugins" % "continuations" % v) },
     scalacOptions ++= Seq("-P:continuations:enable", "-unchecked", "-deprecation", "-feature")
-  )
+  ).dependsOn(RootProject(uri("https://github.com/vmunier/securesocial.git#to-use-with-sbt-dependson")))
 
 }
