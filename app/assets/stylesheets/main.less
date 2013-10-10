@@ -4,7 +4,7 @@
 @iconSpritePath:          "/assets/images/glyphicons-halflings.png";
 @iconWhiteSpritePath:     "/assets/images/glyphicons-halflings-white.png";
 
-@headerHeight: 5px;
+@headerHeight: 31px;
 
 html {
     height: 100%;
@@ -18,6 +18,13 @@ body {
     > header {
         background: grey;
         height: @headerHeight;
+
+        > .headerSiteName a {
+            color: white;
+            font-size: 25px;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
     }
 
     > .container {

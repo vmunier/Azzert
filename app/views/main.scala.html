@@ -29,7 +29,11 @@
         <script src="@routes.Assets.at("components/json3/lib/json3.min.js")"></script>
         <![endif]-->
 
-    <header></header>
+    <header class="text-center">
+      <em class="headerSiteName"><a href="/">Azzert!</a></em>
+      <button ng-click="redirectToLogin('google')" class="btn btn-inverse btn-medium">Signup with Google</button>
+      <button ng-click="redirectToLogin('facebook')" class="btn btn-inverse btn-medium">Signup with Facebook</button>
+    </header>
     <!-- Add your site or application content here -->
     <div class="container">
       <!-- content will go to the ng-view div -->
