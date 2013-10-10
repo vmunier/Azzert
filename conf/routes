@@ -25,11 +25,11 @@ GET    /api/answerHistory/questions/:questionId/sse               controllers.An
 GET    /api/autocomplete/:keyword                                 controllers.AutocompleteCtrl.autocomplete(keyword)
 
 # Login page
-GET     /login                      securesocial.controllers.LoginPage.login
+GET     /login                      controllers.Application.login(provider: String, referer: Option[String])
 GET     /logout                     securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling (only needed if you are using UsernamePasswordProvider)
-GET     /signup                     securesocial.controllers.Registration.startSignUp
+GET     /signup                     securesocial.controllers.Registration.startSignUp(referer: Option[String])
 POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
 GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
 POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
