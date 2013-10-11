@@ -33,3 +33,6 @@ bin/
 
 # npm
 node_modules/
+
+# private files
+conf/securesocial.conf
