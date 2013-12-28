@@ -38,7 +38,7 @@ object Vote {
   }
 
   def findByAnswerId(answerId: String): Future[Seq[Vote]] = {
-    collection.find(Json.obj("answerId" -> BSONObjectID(answerId))).cursor[Vote].toList
+    collection.find(Json.obj("answerId" -> BSONObjectID(answerId))).cursor[Vote].collect[Seq]()
   }
 
   def findAnswerVoteByIp(answerId: String, ipAddress: String): Future[Option[Vote]] = {

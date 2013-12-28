@@ -44,7 +44,7 @@ object Question {
     db.command(Count(collection.name))
   }
 
-  def findAll() = {
-    collection.find(Json.obj()).cursor[Question].toList
+  def findAll(): Future[Seq[Question]] = {
+    collection.find(Json.obj()).cursor[Question].collect[Seq]()
   }
 }

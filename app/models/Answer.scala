@@ -38,7 +38,7 @@ object Answer {
   }
 
   def findByQuestionId(questionId: String): Future[Seq[Answer]] = {
-    collection.find(Json.obj("questionId" -> BSONObjectID(questionId))).cursor[Answer].toList
+    collection.find(Json.obj("questionId" -> BSONObjectID(questionId))).cursor[Answer].collect[Seq]()
   }
 
   def incVoteCount(_id: String, inc: Int) = {
